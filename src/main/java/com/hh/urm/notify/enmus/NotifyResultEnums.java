@@ -4,12 +4,21 @@ package com.hh.urm.notify.enmus;
  * 通知接口返回状态枚举
  */
 public enum NotifyResultEnums {
+    /**
+     * 失败
+     */
     FAULT(0, "失败"),
+    /**
+     * 成功
+     */
     SUCCESS(1, "成功"),
+    /**
+     *参数不足
+     */
     NO_TRACE_ID(0, "参数不足");
 
-    private int index;
-    private String msg;
+    private final int index;
+    private final String msg;
 
     NotifyResultEnums(int index, String msg) {
         this.index = index;

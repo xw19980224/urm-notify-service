@@ -1,9 +1,12 @@
 server:
-  port: 19000
+  port: 8080
 
 spring:
   application:
     name: urm-notify-service
+  data:
+    mongodb:
+      uri: mongodb://urm-1:paw09X_4WhHjTEH@10.131.137.96:8635/urm-1?authSource=urm-1&authMechanism=SCRAM-SHA-256&replicaSet=replica
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://101.35.221.49:5432/notify
@@ -20,7 +23,7 @@ spring:
       bootstrap-servers: 101.35.221.49:9092
     consumer:
       bootstrap-servers: 101.35.221.49:9092
-      group-id: urm-events
+      group-id: urm-notify-service
       #auto-offset-reset: earliest
       auto-offset-reset: latest
       enable-auto-commit: false
@@ -32,15 +35,17 @@ spring:
       poll-timeout: 5000
       ack-mode: manual_immediate
     urm_topics:
-      notify_topic: urm_notify_topic
+      notify_topic: all,urm_sms_notify_topic
+      sms_topic: urm_sms_notify_topic
   jpa:
-    open-in-view: false
     hibernate:
       ddl-auto: none
     show-sql: true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        temp:
+          use_jdbc_metadata_defaults: false
 
 hh:
   sms:
@@ -56,5 +61,5 @@ hh:
         - name: td
           id: 4e34d053e21f448c933a069a636a4226
           signature: 高合汽车
-
-
+sms:
+  uri: https://rtcsms.cn-north-1.myhuaweicloud.com:10743/sms/batchSendSms/v1

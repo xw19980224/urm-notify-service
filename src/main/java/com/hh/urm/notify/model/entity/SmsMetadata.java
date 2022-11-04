@@ -7,10 +7,10 @@ import java.sql.Timestamp;
 import java.util.Objects;
 
 /**
- * @ClassName: TSmsTemplate
+ * @ClassName: SmsMetadata
  * @Author: MaxWell
- * @Description: 短信模板
- * @Date: 2022/10/28 16:44
+ * @Description:
+ * @Date: 2022/11/2 9:45
  * @Version: 1.0
  */
 @Entity
@@ -20,7 +20,7 @@ public class SmsMetadata {
     /**
      * id
      */
-    private Long id;
+    private String code;
     /**
      * 短信名称
      */
@@ -28,7 +28,7 @@ public class SmsMetadata {
     /**
      * 短信描述
      */
-    private String desc;
+    private String description;
     /**
      * 通道号
      */
@@ -58,19 +58,23 @@ public class SmsMetadata {
      */
     private String createBy;
     /**
-     * 管理人
+     * 短信模板Id
      */
-    private String manager;
+    private String templateId;
+    /**
+     * 短信模板内容
+     */
+    private String templateContent;
 
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "code", nullable = false, length = 255)
     @GeneratedValue(generator = "jpa-uuid")
-    public Long getId() {
-        return id;
+    public String getCode() {
+        return code;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setCode(String code) {
+        this.code = code;
     }
 
     @Basic
@@ -84,13 +88,13 @@ public class SmsMetadata {
     }
 
     @Basic
-    @Column(name = "desc", nullable = true, length = 255)
-    public String getDesc() {
-        return desc;
+    @Column(name = "description", nullable = true, length = 255)
+    public String getDescription() {
+        return description;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setDescription(String desc) {
+        this.description = description;
     }
 
     @Basic
@@ -154,7 +158,7 @@ public class SmsMetadata {
     }
 
     @Basic
-    @Column(name = "createBy", nullable = false, length = 25)
+    @Column(name = "create_by", nullable = false, length = 25)
     public String getCreateBy() {
         return createBy;
     }
@@ -164,29 +168,35 @@ public class SmsMetadata {
     }
 
     @Basic
-    @Column(name = "manager", nullable = true, length = 25)
-    public String getManager() {
-        return manager;
+    @Column(name = "template_id", nullable = false, length = 50)
+    public String getTemplateId() {
+        return templateId;
     }
 
-    public void setManager(String manager) {
-        this.manager = manager;
+    public void setTemplateId(String templateId) {
+        this.templateId = templateId;
+    }
+
+    @Basic
+    @Column(name = "template_content", nullable = false, length = 255)
+    public String getTemplateContent() {
+        return templateContent;
+    }
+
+    public void setTemplateContent(String templateContent) {
+        this.templateContent = templateContent;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         SmsMetadata that = (SmsMetadata) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(desc, that.desc) && Objects.equals(sender, that.sender) && Objects.equals(appKey, that.appKey) && Objects.equals(appSecret, that.appSecret) && Objects.equals(signature, that.signature) && Objects.equals(createTime, that.createTime) && Objects.equals(updateTime, that.updateTime) && Objects.equals(createBy, that.createBy) && Objects.equals(manager, that.manager);
+        return Objects.equals(code, that.code) && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(sender, that.sender) && Objects.equals(appKey, that.appKey) && Objects.equals(appSecret, that.appSecret) && Objects.equals(signature, that.signature) && Objects.equals(createTime, that.createTime) && Objects.equals(updateTime, that.updateTime) && Objects.equals(createBy, that.createBy) && Objects.equals(templateId, that.templateId) && Objects.equals(templateContent, that.templateContent);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, desc, sender, appKey, appSecret, signature, createTime, updateTime, createBy, manager);
+        return Objects.hash(code, name, description, sender, appKey, appSecret, signature, createTime, updateTime, createBy, templateId, templateContent);
     }
 }

@@ -1,5 +1,10 @@
 package com.hh.urm.notify.model.dto.message;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
 /**
@@ -9,17 +14,18 @@ import java.util.List;
  * @Date: 2022/10/25 17:43
  * @Version: 1.0
  */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class SmsMessageDTO {
     /**
      * 接收人
      */
-    private String toMobile;
+    private String receiver;
     /**
      * 短信参数
      */
-    private String[] params;
-    /**
-     * 短信模板Id
-     */
-    private String smsTemplateId;
+    private String[] templateParams;
+
 }

@@ -25,7 +25,7 @@ public class AppMessageDTO {
     /**
      * OneApp的用户Id
      */
-    private String superId;
+    private String idmId;
     /**
      * 业务类型
      */

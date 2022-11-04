@@ -4,6 +4,8 @@ import com.hh.urm.notify.model.entity.SmsMetadata;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.util.Optional;
+
 /**
  * @ClassName: SmsMetadata
  * @Author: MaxWell
@@ -11,5 +13,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  * @Date: 2022/10/28 17:15
  * @Version: 1.0
  */
-public interface SmsMetadataRepository extends JpaRepository<SmsMetadata, Long>, JpaSpecificationExecutor<SmsMetadata> {
+public interface SmsMetadataRepository extends JpaRepository<SmsMetadata, String>, JpaSpecificationExecutor<SmsMetadata> {
+
+    Optional<SmsMetadata> findOneByCode(String id);
 }

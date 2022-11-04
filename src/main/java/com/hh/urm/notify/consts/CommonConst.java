@@ -41,15 +41,13 @@ public class CommonConst {
     public static final String FAILED = "failed";
     public static final String NO_RECORD = "noRecord";
     public static final String WARNING = "warning";
+    public final static String EXCEPTION = "exception";
 
     public static final String ACTIVITY_TIME = "activity_time";
     public static final String CREATE_TIME = "_create_time";
     public static final String UPDATE_TIME = "_update_time";
 
-    /**
-     * 池子Id
-     */
-    public static final Integer RECYCLE_POOL_ID = 8888; //回收池
+    public final static String TYPE = "type";
 
     private CommonConst() {
 

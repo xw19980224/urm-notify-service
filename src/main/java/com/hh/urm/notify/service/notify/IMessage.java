@@ -11,5 +11,5 @@ import com.alibaba.fastjson.JSONObject;
  */
 public interface IMessage {
 
-    JSONObject sendMessage(String params);
+    JSONObject sendMessage(JSONObject jsonObject);
 }
