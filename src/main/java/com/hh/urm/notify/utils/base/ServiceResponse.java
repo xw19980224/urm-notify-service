@@ -1,5 +1,6 @@
 package com.hh.urm.notify.utils.base;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.MoreObjects;
 import com.hh.urm.notify.enmus.NotifyResultEnums;
 import com.hh.urm.notify.enmus.ResultMsg;
@@ -218,6 +219,13 @@ public class ServiceResponse<T> implements Serializable {
      */
     public static <T> ServiceResponse<T> defaultFailResponse(String traceId) {
         return createFailResponse(traceId, FAIL_KEY, "系统异常，请联系管理员！");
+    }
+
+    /**
+     * 构建错误的响应
+     */
+    public static <T> ServiceResponse<T> createFailResponse(String traceId, NotifyResultEnums verifyFailed, T data) {
+        return new ServiceResponse<T>(traceId, false, verifyFailed.getIndex(), data, verifyFailed.getMsg());
     }
 
     @Override

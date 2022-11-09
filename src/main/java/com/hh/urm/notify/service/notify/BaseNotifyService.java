@@ -39,10 +39,11 @@ public abstract class BaseNotifyService implements IMessage {
             log.error("traceId:{},消息发送出现异常，请及时处理。Exception Message:{} \n Exception stackTrace:{}", traceId, e.getMessage(), e.getStackTrace());
             sendResp = EXCEPTION;
         }
+        log.info("traceId:{},消息发送参数：{},响应结果：{}", traceId, params, sendResp);
 
         recordHistory(params, sendResp);
 
-        return null;
+        return result;
     }
 
     /**

@@ -4,7 +4,9 @@ import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 /**
- * CommonResultBean
+ * HttpResultBean
+ *
+ * @author maxwell
  */
 @ApiModel("HttpResultBean")
 @Data

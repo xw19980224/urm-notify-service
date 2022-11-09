@@ -13,6 +13,11 @@ public class NotifyConst {
     public static final String NOTIFY_TYPE_NOT_IN_RULES = "请检查通知方式是否符合规范";
     public static final String NO_REQUEST_DATA = "no data";
 
+    /**
+     * 模板Id
+     */
+    public final static String TEMPLATE_ID = "templateId";
+
     public enum TopicEnums {
         /**
          * all
@@ -67,5 +72,61 @@ public class NotifyConst {
         public int getCode() {
             return code;
         }
+    }
+
+    public class Sms {
+        /**
+         * AppKey
+         */
+        public final static String APP_KEY = "appKey";
+        /**
+         * appSecret
+         */
+        public final static String APP_SECRET = "appSecret";
+        /**
+         * 签明
+         */
+        public final static String SIGNATURE = "signature";
+        /**
+         * 接收者
+         */
+        public final static String RECEIVER = "receiver";
+        /**
+         * 拓展字段
+         */
+        public final static String EXTEND = "extend";
+        /**
+         * 回调地址
+         */
+        public final static String STATUS_CALL_BACK = "statusCallback";
+        /**
+         * 模板参数
+         */
+        public final static String TEMPLATE_PARAMS = "templateParams";
+        /**
+         * 发送方
+         */
+        public final static String FROM = "from";
+        /**
+         * 接收方
+         */
+        public final static String TO = "to";
+
+        /**
+         * 模板code
+         */
+        public final static String TEMPLATE_CODE = "templateCode";
+        /**
+         * 模板名称
+         */
+        public final static String TEMPLATE_NAME = "templateName";
+        /**
+         * 通道号
+         */
+        public final static String SENDER = "sender";
+        /**
+         * 短信内容
+         */
+        public final static String SMS_CONTENT = "smsContent";
     }
 }

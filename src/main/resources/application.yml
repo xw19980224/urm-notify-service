@@ -62,4 +62,6 @@ hh:
           id: 4e34d053e21f448c933a069a636a4226
           signature: 高合汽车
 sms:
-  uri: https://rtcsms.cn-north-1.myhuaweicloud.com:10743/sms/batchSendSms/v1
+  host: https://rtcsms.cn-north-1.myhuaweicloud.com:10743
+  url:
+    batchUrl: /sms/batchSendDiffSms/v1

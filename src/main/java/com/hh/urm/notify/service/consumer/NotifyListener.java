@@ -43,14 +43,9 @@ public class NotifyListener extends NotifyServiceSupport {
 
         // 2、处理消息
         String jsonStr = (String) message.get();
-        NotifyDataDTO notifyDataDTO = JSONObject.parseObject(jsonStr, NotifyDataDTO.class);
-        SmsMessageDTO smsMessage = notifyDataDTO.getSmsMessage();
-        if (Objects.isNull(smsMessage)) {
-            return;
-        }
 
         IMessage iMessage = notifyServiceConfig.get(NotifyServiceEnums.SMS.getCode());
-        iMessage.sendMessage(JSONObject.parseObject(JSONObject.toJSONString(smsMessage)));
+        iMessage.sendMessage(JSONObject.parseObject(jsonStr));
 
         // 4. 消息消费完成
         ack.acknowledge();

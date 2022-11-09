@@ -15,8 +15,11 @@ public enum NotifyResultEnums {
     /**
      *参数不足
      */
-    NO_TRACE_ID(0, "参数不足");
-
+    NO_TRACE_ID(0, "参数不足"),
+    /**
+     * 校验未通过
+     */
+    VERIFY_FAILED(0, "校验未通过");
     private final int index;
     private final String msg;
 

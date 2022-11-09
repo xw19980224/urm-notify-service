@@ -1,11 +1,12 @@
 package com.hh.urm.notify.service.notify.handler;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.hh.urm.notify.annotation.NotifyService;
 import com.hh.urm.notify.enmus.NotifyServiceEnums;
-import com.hh.urm.notify.model.entity.SmsMetadata;
-import com.hh.urm.notify.repository.SmsMetadataRepository;
+import com.hh.urm.notify.model.dto.notify.SmsContentDTO;
+import com.hh.urm.notify.model.dto.notify.SmsDTO;
 import com.hh.urm.notify.service.notify.BaseNotifyService;
 import com.hh.urm.notify.utils.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +23,14 @@ import org.springframework.data.util.Pair;
 
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Base64;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 import static com.hh.urm.notify.consts.CommonConst.FAILED;
-import static com.hh.urm.notify.consts.SmsConst.*;
+import static com.hh.urm.notify.consts.NotifyConst.Sms.*;
+import static com.hh.urm.notify.consts.NotifyConst.TEMPLATE_ID;
 
 
 /**
@@ -40,13 +44,10 @@ import static com.hh.urm.notify.consts.SmsConst.*;
 @NotifyService(notifyService = NotifyServiceEnums.SMS)
 public class SmsServiceImpl extends BaseNotifyService {
 
-    @Autowired
-    private SmsMetadataRepository smsMetadataRepository;
-
-    @Autowired
-
-    @Value("${sms.uri}")
-    private String smsUri;
+    @Value("${sms.host}")
+    private String host;
+    @Value("${sms.url.batchUrl}")
+    private String batchUrl;
 
     private String appKey = "";
     private String appSecret = "";
@@ -69,34 +70,43 @@ public class SmsServiceImpl extends BaseNotifyService {
     @Override
     protected Pair<Boolean, JSONObject> buildParams(JSONObject jsonObject, JSONObject result) {
         String receiver = (String) jsonObject.getOrDefault(RECEIVER, "");
-        String templateParamStr = (String) jsonObject.getOrDefault(TEMPLATE_PARAMS, "");
-        List<String> collect = Arrays.stream(templateParamStr.split(",")).collect(Collectors.toList());
-        String templateParams = JSONObject.toJSONString(collect);
+        JSONArray paramsArray = jsonObject.getJSONArray(TEMPLATE_PARAMS);
+
+        String templateId = (String) jsonObject.getOrDefault(TEMPLATE_ID, "");
+        String sender = (String) jsonObject.getOrDefault(SENDER, "");
+        String signature = (String) jsonObject.getOrDefault(SIGNATURE, "");
         String statusCallback = (String) jsonObject.getOrDefault(STATUS_CALL_BACK, "");
         String extend = (String) jsonObject.getOrDefault(EXTEND, "");
 
-        JSONObject params = new JSONObject();
+        appKey = ((String) jsonObject.getOrDefault(APP_KEY, ""));
+        appSecret = ((String) jsonObject.getOrDefault(APP_SECRET, ""));
 
-//        String templateId = smsMetadata.getTemplateId();
-//        String sender = smsMetadata.getSender();
-//        String signature = smsMetadata.getSignature();
-//        jsonObject.put(TO, receiver);
-//        jsonObject.put(FROM, sender);
-//        jsonObject.put(TEMPLATE_ID, templateId);
-//        jsonObject.put(SIGNATURE, signature);
-
-        if (!collect.isEmpty()) {
-            params.put(TEMPLATE_PARAMS, templateParams);
-        }
-
+        SmsDTO smsDTO = new SmsDTO();
+        smsDTO.setFrom(sender);
         if (!Strings.isNullOrEmpty(statusCallback)) {
-            params.put(STATUS_CALL_BACK, statusCallback);
+            smsDTO.setStatusCallback(statusCallback);
+        }
+        if (!Strings.isNullOrEmpty(extend)) {
+            smsDTO.setExtend(extend);
         }
 
-        if (!Strings.isNullOrEmpty(extend)) {
-            params.put(EXTEND, extend);
+        SmsContentDTO smsContentDTO = new SmsContentDTO();
+        if (!receiver.contains("+86")) {
+            receiver = "+86" + receiver;
         }
-        return Pair.of(true, params);
+        smsContentDTO.setTo(new String[]{receiver});
+        smsContentDTO.setTemplateId(templateId);
+        if (!Strings.isNullOrEmpty(signature)) {
+            smsContentDTO.setSignature(signature);
+        }
+
+        if (!paramsArray.isEmpty()) {
+            List<String> template = JSONObject.parseArray(paramsArray.toJSONString(), String.class);
+            smsContentDTO.setTemplateParas(template.toArray(new String[0]));
+        }
+        smsDTO.setSmsContent(new SmsContentDTO[]{smsContentDTO});
+
+        return Pair.of(true, (JSONObject) JSONObject.toJSON(smsDTO));
     }
 
     @Override
@@ -104,7 +114,7 @@ public class SmsServiceImpl extends BaseNotifyService {
         String bodyStr = paramsToString(params);
         try (CloseableHttpClient client = HttpUtil.createAllTrustingClient()) {
             HttpUriRequest request = RequestBuilder.create("POST")
-                    .setUri(smsUri)
+                    .setUri(host + batchUrl)
                     .addHeader("Content-Type", "application/x-www-form-urlencoded")
                     .addHeader("Authorization", "WSSE realm=\"SDP\",profile=\"UsernameToken\",type=\"Appkey\"")
                     .addHeader("X-WSSE", getXWsse())
@@ -126,9 +136,13 @@ public class SmsServiceImpl extends BaseNotifyService {
         StringBuilder sb = new StringBuilder();
         String temp = "";
 
-        for (String s : params.keySet()) {
-            temp = URLEncoder.encode(params.getString(s), "UTF-8");
-            sb.append(s).append("=").append(temp).append("&");
+        for (String key : params.keySet()) {
+            String value = params.getString(key);
+            if (Strings.isNullOrEmpty(value)) {
+                continue;
+            }
+            temp = URLEncoder.encode(value, "UTF-8");
+            sb.append(key).append("=").append(temp).append("&");
         }
         return sb.deleteCharAt(sb.length() - 1).toString();
     }

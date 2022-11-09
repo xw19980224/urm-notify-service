@@ -1,5 +1,6 @@
 package com.hh.urm.notify.service.notify;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 /**
@@ -12,4 +13,5 @@ import com.alibaba.fastjson.JSONObject;
 public interface IMessage {
 
     JSONObject sendMessage(JSONObject jsonObject);
+
 }
