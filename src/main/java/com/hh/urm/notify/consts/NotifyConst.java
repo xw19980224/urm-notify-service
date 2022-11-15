@@ -18,33 +18,6 @@ public class NotifyConst {
      */
     public final static String TEMPLATE_ID = "templateId";
 
-    public enum TopicEnums {
-        /**
-         * all
-         */
-        ALL("0", "all"),
-        /**
-         * 短信
-         */
-        SMS("1", "sms");
-
-        private final String code;
-        private final String topicName;
-
-        TopicEnums(String code, String topicName) {
-            this.code = code;
-            this.topicName = topicName;
-        }
-
-        public String getCode() {
-            return code;
-        }
-
-        public String getTopicName() {
-            return topicName;
-        }
-    }
-
     public enum KafkaStateEnums {
         /**
          * 异常

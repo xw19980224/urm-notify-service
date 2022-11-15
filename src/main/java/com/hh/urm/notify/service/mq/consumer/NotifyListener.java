@@ -1,24 +1,21 @@
-package com.hh.urm.notify.service.consumer;
+package com.hh.urm.notify.service.mq.consumer;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hh.urm.notify.enmus.NotifyServiceEnums;
-import com.hh.urm.notify.model.dto.NotifyDataDTO;
-import com.hh.urm.notify.model.dto.message.SmsMessageDTO;
 import com.hh.urm.notify.service.notify.IMessage;
 import com.hh.urm.notify.service.notify.NotifyServiceSupport;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import java.util.Objects;
 import java.util.Optional;
+
+import static com.hh.urm.notify.consts.CommonConst.CONFIG;
+import static com.hh.urm.notify.consts.CommonConst.DATA;
 
 /**
  * @ClassName: NotifyListener
@@ -45,7 +42,10 @@ public class NotifyListener extends NotifyServiceSupport {
         String jsonStr = (String) message.get();
 
         IMessage iMessage = notifyServiceConfig.get(NotifyServiceEnums.SMS.getCode());
-        iMessage.sendMessage(JSONObject.parseObject(jsonStr));
+        JSONObject jsonObject = JSONObject.parseObject(jsonStr);
+        JSONObject config = jsonObject.getJSONObject(CONFIG);
+
+        JSONObject result = iMessage.sendMessage(jsonObject,config);
 
         // 4. 消息消费完成
         ack.acknowledge();

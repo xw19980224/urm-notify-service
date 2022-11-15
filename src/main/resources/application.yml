@@ -6,7 +6,7 @@ spring:
     name: urm-notify-service
   data:
     mongodb:
-      uri: mongodb://urm-1:paw09X_4WhHjTEH@10.131.137.96:8635/urm-1?authSource=urm-1&authMechanism=SCRAM-SHA-256&replicaSet=replica
+      uri: mongodb://urm-1:p3aw09X_4Wh5HjT1EH@10.131.137.96:8635/urm-1?authSource=urm-1&authMechanism=SCRAM-SHA-256&replicaSet=replica
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://101.35.221.49:5432/notify
@@ -35,7 +35,6 @@ spring:
       poll-timeout: 5000
       ack-mode: manual_immediate
     urm_topics:
-      notify_topic: all,urm_sms_notify_topic
       sms_topic: urm_sms_notify_topic
   jpa:
     hibernate:
@@ -47,20 +46,6 @@ spring:
         temp:
           use_jdbc_metadata_defaults: false
 
-hh:
-  sms:
-    - env: dev # 环境变量值可以自定义
-      url: https://rtcsms.cn-north-1.myhuaweicloud.com:10743/sms/batchSendSms/v1
-      sender: 8820100935957 # 通道号
-      certificate-trust: true
-      app-key: 9e4VrLQd7BX3VZhq6x1g951q4aCr
-      app-secret: r83k2Q9AQD31FrNO904okwTJ1ZBJ
-      mode: prod # 测试（debug）,生产（prod）不写默认debug，debug是不发短信的
-      status-callback-uri: xxx # 该回写地址目前仅支持外网
-      templates:
-        - name: td
-          id: 4e34d053e21f448c933a069a636a4226
-          signature: 高合汽车
 sms:
   host: https://rtcsms.cn-north-1.myhuaweicloud.com:10743
   url:

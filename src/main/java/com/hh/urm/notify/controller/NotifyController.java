@@ -115,16 +115,16 @@ public class NotifyController {
     private Boolean verifyNotifyTypeParams(NotifyDTO notifyDTO, JSONObject result) {
 
         ArrayList<String> list = Lists.newArrayList(notifyDTO.getNotifyType());
-        boolean containsAll = list.contains(NotifyConst.TopicEnums.ALL.getCode());
+        boolean containsAll = list.contains(NotifyServiceEnums.ALL.getCode());
         // 是否通知全部
         if (containsAll) {
-            result.put(NotifyConst.TopicEnums.ALL.getTopicName(), NotifyConst.LACK_TEMPLATE_PARAMS_MSG);
+            result.put(NotifyServiceEnums.ALL.getName(), NotifyConst.LACK_TEMPLATE_PARAMS_MSG);
             return !Strings.isNullOrEmpty(notifyDTO.getSmsCode());
         }
         return list.stream().allMatch(item -> {
-            if (NotifyConst.TopicEnums.SMS.getCode().equals(item)) {
+            if (NotifyServiceEnums.SMS.getCode().equals(item)) {
                 if (Strings.isNullOrEmpty(notifyDTO.getSmsCode())) {
-                    result.put(NotifyConst.TopicEnums.SMS.getTopicName(), NotifyConst.LACK_TEMPLATE_PARAMS_MSG);
+                    result.put(NotifyServiceEnums.SMS.getName(), NotifyConst.LACK_TEMPLATE_PARAMS_MSG);
                     return false;
                 }
             }

@@ -1,5 +1,11 @@
 package com.hh.urm.notify.enmus;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * @ClassName: NotifyServiceEnums
  * @Author: MaxWell
@@ -11,45 +17,55 @@ public enum NotifyServiceEnums {
     /**
      * 全部
      */
-    ALL("0", "all"),
+    ALL("0", "all", "all", ""),
     /**
      * 短信
      */
-    SMS("1", "smsService"),
+    SMS("1", "sms", "smsService", "urm_sms_notify_topic"),
     /**
      * 邮箱
      */
-    MAIL("2", "mailService"),
+    MAIL("2", "mail", "mailService", "urm_mail_notify_topic"),
     /**
      * OneApp
      */
-    ONE_APP("3", "oneAppService"),
+    ONE_APP("3", "oneApp", "oneAppService", "urm_oneApp_notify_topic"),
     /**
      * 飞书
      */
-    FEI_SHU("4", "feiShuService"),
+    FEI_SHU("4", "feiShu", "feiShuService", "urm_feiShu_notify_topic"),
     /**
      * 企微
      */
-    QI_WEI("5", "qiWeiService"),
+    QI_WEI("5", "qiWei", "qiWeiService", "urm_qiWei_notify_topic"),
 
     /**
      * 其他
      */
-    OTHER("6", "other");
+    OTHER("6", "other", "other", "urm_other_notify_topic");
 
     /**
      * 业务编码
      */
     private final String code;
     /**
+     * 通知名称
+     */
+    private final String name;
+    /**
      * 业务标识
      */
     private final String serviceName;
+    /**
+     * 通知主题名称
+     */
+    private final String topicName;
 
-    NotifyServiceEnums(String code, String serviceName) {
+    NotifyServiceEnums(String code, String name, String serviceName, String topicName) {
         this.code = code;
+        this.name = name;
         this.serviceName = serviceName;
+        this.topicName = topicName;
     }
 
     public String getCode() {
@@ -58,6 +74,17 @@ public enum NotifyServiceEnums {
 
     public String getServiceName() {
         return serviceName;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getTopicName() {
+        if (Strings.isNullOrEmpty(topicName)) {
+            return getAllTopic();
+        }
+        return topicName;
     }
 
     /**
@@ -90,5 +117,66 @@ public enum NotifyServiceEnums {
             }
         }
         return exist;
+    }
+
+    /**
+     * 获取所有通知主题
+     *
+     * @return 通知主题
+     */
+    private String getAllTopic() {
+        List<String> topicList = Lists.newArrayList();
+
+        NotifyServiceEnums[] notifyServiceEnums = values();
+        for (NotifyServiceEnums notifyServiceEnum : notifyServiceEnums) {
+            String code = notifyServiceEnum.getCode();
+            if (ALL.getCode().equals(code)) {
+                continue;
+            }
+            topicList.add(notifyServiceEnum.getTopicName());
+        }
+        return String.join(",", topicList);
+    }
+
+    /**
+     * 通过通知类型获取通知主题
+     *
+     * @param notifyType
+     * @return
+     */
+    public static List<String> getTopicList(List<String> notifyType) {
+        return notifyType.stream().filter(item -> !Strings.isNullOrEmpty(getTopicNameByCode(item))).map(NotifyServiceEnums::getTopicNameByCode).collect(Collectors.toList());
+    }
+
+    /**
+     * 通过code获取通知主题
+     *
+     * @param code 业务编码
+     * @return serviceName
+     */
+    public static String getTopicNameByCode(String code) {
+        NotifyServiceEnums[] notifyServiceEnums = values();
+        for (NotifyServiceEnums notifyServiceEnum : notifyServiceEnums) {
+            if (notifyServiceEnum.getCode().equals(code)) {
+                return notifyServiceEnum.getTopicName();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 通过topicName 获取 code
+     *
+     * @param topicName
+     * @return
+     */
+    public static String getCodeByTopicName(String topicName) {
+        NotifyServiceEnums[] notifyServiceEnums = values();
+        for (NotifyServiceEnums notifyServiceEnum : notifyServiceEnums) {
+            if (notifyServiceEnum.getTopicName().equals(topicName)) {
+                return notifyServiceEnum.getCode();
+            }
+        }
+        return null;
     }
 }

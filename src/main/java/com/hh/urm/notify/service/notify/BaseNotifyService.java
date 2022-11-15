@@ -1,7 +1,6 @@
 package com.hh.urm.notify.service.notify;
 
 import com.alibaba.fastjson.JSONObject;
-import com.mongodb.BasicDBObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.util.Pair;
 
@@ -18,17 +17,21 @@ import static com.hh.urm.notify.consts.CommonConst.*;
 public abstract class BaseNotifyService implements IMessage {
 
     @Override
-    public JSONObject sendMessage(JSONObject jsonObject) {
+    public JSONObject sendMessage(JSONObject jsonObject, JSONObject config) {
         String traceId = jsonObject.getString(TRACE_ID);
 
         JSONObject result = new JSONObject();
         // 1、检查参数
-        Boolean checkResult = checkParams(jsonObject, result);
-        if (!checkResult) return result;
+        Boolean checkResult = checkParams(jsonObject, config, result);
+        if (!checkResult) {
+            return result;
+        }
 
         // 2、构建参数
-        Pair<Boolean, JSONObject> buildParamsResult = buildParams(jsonObject, result);
-        if (!buildParamsResult.getFirst()) return result;
+        Pair<Boolean, JSONObject> buildParamsResult = buildParams(jsonObject, config, result);
+        if (!buildParamsResult.getFirst()) {
+            return result;
+        }
         JSONObject params = buildParamsResult.getSecond();
 
         // 3、发送消息
@@ -50,19 +53,21 @@ public abstract class BaseNotifyService implements IMessage {
      * 规则校验
      *
      * @param jsonObject 动作上报参数
+     * @param config     配置文件
      * @param result     校验结果
      * @return 是否校验通过
      */
-    protected abstract Boolean checkParams(JSONObject jsonObject, JSONObject result);
+    protected abstract Boolean checkParams(JSONObject jsonObject, JSONObject config, JSONObject result);
 
     /**
      * 构建参数
      *
-     * @param jsonObject
+     * @param jsonObject 请求参数
+     * @param config     配置文件
      * @param result     失败结果
      * @return Pair 1、是否构建成功 2、参数
      */
-    protected abstract Pair<Boolean, JSONObject> buildParams(JSONObject jsonObject, JSONObject result);
+    protected abstract Pair<Boolean, JSONObject> buildParams(JSONObject jsonObject, JSONObject config, JSONObject result);
 
     /**
      * 消息发送

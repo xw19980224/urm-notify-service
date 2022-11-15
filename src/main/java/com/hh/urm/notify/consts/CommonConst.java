@@ -25,6 +25,7 @@ public class CommonConst {
 
     public static final String MSG = "msg";
     public static final String ARGV = "argv";
+    public final static String CONFIG = "config";
     public static final String SUCCESS_CODE = "000000";
     public static final String CODE = "code";
 

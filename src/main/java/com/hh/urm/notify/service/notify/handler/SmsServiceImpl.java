@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.hh.urm.notify.annotation.NotifyService;
 import com.hh.urm.notify.enmus.NotifyServiceEnums;
+import com.hh.urm.notify.model.dto.message.SmsMessageDTO;
 import com.hh.urm.notify.model.dto.notify.SmsContentDTO;
 import com.hh.urm.notify.model.dto.notify.SmsDTO;
 import com.hh.urm.notify.service.notify.BaseNotifyService;
@@ -17,7 +18,6 @@ import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 
@@ -27,8 +27,9 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-import static com.hh.urm.notify.consts.CommonConst.FAILED;
+import static com.hh.urm.notify.consts.CommonConst.*;
 import static com.hh.urm.notify.consts.NotifyConst.Sms.*;
 import static com.hh.urm.notify.consts.NotifyConst.TEMPLATE_ID;
 
@@ -53,13 +54,21 @@ public class SmsServiceImpl extends BaseNotifyService {
     private String appSecret = "";
 
     @Override
-    protected Boolean checkParams(JSONObject jsonObject, JSONObject result) {
+    protected Boolean checkParams(JSONObject jsonObject, JSONObject config, JSONObject result) {
 
         // 1、获取参数
-        String receiver = (String) jsonObject.getOrDefault(RECEIVER, "");
+        String dataStr = (String) jsonObject.getOrDefault(DATA, "");
+        String traceId = (String) jsonObject.getOrDefault(TRACE_ID, "");
+        String type = (String) jsonObject.getOrDefault(TYPE, "");
+        List<SmsMessageDTO> smsMessageDTOS = JSONObject.parseArray(dataStr, SmsMessageDTO.class);
+
+        List<SmsMessageDTO> collect = smsMessageDTOS.stream().filter(item -> {
+            String receiver = item.getReceiver();
+            return !Strings.isNullOrEmpty(receiver);
+        }).collect(Collectors.toList());
 
         // 2、校验参数
-        if (Strings.isNullOrEmpty(receiver)) {
+        if (collect.isEmpty()) {
             getResultMsg(result, "接收者不存在", FAILED);
             return false;
         }
@@ -68,7 +77,9 @@ public class SmsServiceImpl extends BaseNotifyService {
     }
 
     @Override
-    protected Pair<Boolean, JSONObject> buildParams(JSONObject jsonObject, JSONObject result) {
+    protected Pair<Boolean, JSONObject> buildParams(JSONObject jsonObject, JSONObject config, JSONObject result) {
+        String dataStr = (String) jsonObject.getOrDefault(DATA, "");
+        List<SmsMessageDTO> smsMessageDTOS = JSONArray.parseArray(dataStr, SmsMessageDTO.class);
         String receiver = (String) jsonObject.getOrDefault(RECEIVER, "");
         JSONArray paramsArray = jsonObject.getJSONArray(TEMPLATE_PARAMS);
 
