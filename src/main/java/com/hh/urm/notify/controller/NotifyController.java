@@ -7,10 +7,10 @@ import com.hh.urm.notify.consts.NotifyConst;
 import com.hh.urm.notify.enmus.NotifyResultEnums;
 import com.hh.urm.notify.enmus.NotifyServiceEnums;
 import com.hh.urm.notify.model.bo.NotifyBo;
-import com.hh.urm.notify.model.dto.NotifyDTO;
-import com.hh.urm.notify.model.dto.NotifyDataDTO;
-import com.hh.urm.notify.model.entity.SmsMetadata;
-import com.hh.urm.notify.repository.SmsMetadataRepository;
+import com.hh.urm.notify.model.req.notify.NotifyDataReq;
+import com.hh.urm.notify.model.entity.SmsTemplate;
+import com.hh.urm.notify.model.req.notify.NotifyReq;
+import com.hh.urm.notify.repository.SmsTemplateRepository;
 import com.hh.urm.notify.service.notify.INotifyService;
 import com.hh.urm.notify.utils.base.ServiceResponse;
 import io.swagger.annotations.ApiOperation;
@@ -43,15 +43,15 @@ public class NotifyController {
     private INotifyService notifyService;
 
     @Autowired
-    private SmsMetadataRepository smsMetadataRepository;
+    private SmsTemplateRepository smsTemplateRepository;
 
     @ApiOperation(value = "消息通知接口", notes = "通知接口", httpMethod = "POST")
     @PostMapping("/sendMessage")
-    public ServiceResponse<Object> sendMessage(@Validated @RequestBody NotifyDTO notifyDTO) {
-        String traceId = notifyDTO.getTraceId();
+    public ServiceResponse<Object> sendMessage(@Validated @RequestBody NotifyReq notifyReq) {
+        String traceId = notifyReq.getTraceId();
 
         // 1、校验通知类型
-        String[] notifyType = notifyDTO.getNotifyType();
+        String[] notifyType = notifyReq.getNotifyType();
         Boolean exist = NotifyServiceEnums.checkCodeIsExist(notifyType);
         if (!exist) {
             ServiceResponse.createFailResponse(traceId, NotifyConst.NOTIFY_TYPE_NOT_IN_RULES);
@@ -59,44 +59,44 @@ public class NotifyController {
 
         JSONObject result = new JSONObject();
         // 2、检验通知类型模板参数
-        Boolean verifyResult = verifyNotifyTypeParams(notifyDTO, result);
+        Boolean verifyResult = verifyNotifyTypeParams(notifyReq, result);
         if (!verifyResult) {
             return ServiceResponse.createFailResponse(traceId, result, NotifyResultEnums.FAULT.getMsg());
         }
 
         // 3、校验Data数据
-        List<NotifyDataDTO> data = notifyDTO.getData();
+        List<NotifyDataReq> data = notifyReq.getData();
         if (data == null || data.isEmpty()) {
             ServiceResponse.createFailResponse(traceId, NotifyConst.NO_REQUEST_DATA);
         }
 
         // 4、校验模板code 封装NotifyBo对象。
-        return verifyAndConvert(notifyDTO);
+        return verifyAndConvert(notifyReq);
     }
 
     /**
      * 1、校验通知模板参数
      * 2、封装NotifyBo对象 {@link NotifyBo}
      *
-     * @param notifyDTO 通知DTO
+     * @param notifyReq 通知DTO
      * @return NotifyBo
      */
-    private ServiceResponse<Object> verifyAndConvert(NotifyDTO notifyDTO) {
+    private ServiceResponse<Object> verifyAndConvert(NotifyReq notifyReq) {
 
         NotifyBo notifyBo = new NotifyBo();
-        BeanUtils.copyProperties(notifyDTO, notifyBo);
+        BeanUtils.copyProperties(notifyReq, notifyBo);
 
         List<String> notifyType = Lists.newArrayList(notifyBo.getNotifyType());
 
         JSONObject result = new JSONObject();
 
         if (notifyType.contains(NotifyServiceEnums.SMS.getCode())) {
-            String smsCode = notifyDTO.getSmsCode();
-            SmsMetadata smsMetadata = smsMetadataRepository.findOneByCode(smsCode).orElse(null);
-            if (Objects.isNull(smsMetadata)) {
+            String smsCode = notifyReq.getSmsCode();
+            SmsTemplate smsTemplate = smsTemplateRepository.findOneByCode(smsCode).orElse(null);
+            if (Objects.isNull(smsTemplate)) {
                 result.put("smsCode", "短信模板不存在");
             } else {
-                notifyBo.setSmsMetadata(smsMetadata);
+                notifyBo.setSmsTemplate(smsTemplate);
             }
         }
         if (!result.isEmpty()){
@@ -108,22 +108,22 @@ public class NotifyController {
     /**
      * 检验通知模板配置
      *
-     * @param notifyDTO 请求参数
+     * @param notifyReq 请求参数
      * @param result    结果
      * @return 是否通过
      */
-    private Boolean verifyNotifyTypeParams(NotifyDTO notifyDTO, JSONObject result) {
+    private Boolean verifyNotifyTypeParams(NotifyReq notifyReq, JSONObject result) {
 
-        ArrayList<String> list = Lists.newArrayList(notifyDTO.getNotifyType());
+        ArrayList<String> list = Lists.newArrayList(notifyReq.getNotifyType());
         boolean containsAll = list.contains(NotifyServiceEnums.ALL.getCode());
         // 是否通知全部
         if (containsAll) {
             result.put(NotifyServiceEnums.ALL.getName(), NotifyConst.LACK_TEMPLATE_PARAMS_MSG);
-            return !Strings.isNullOrEmpty(notifyDTO.getSmsCode());
+            return !Strings.isNullOrEmpty(notifyReq.getSmsCode());
         }
         return list.stream().allMatch(item -> {
             if (NotifyServiceEnums.SMS.getCode().equals(item)) {
-                if (Strings.isNullOrEmpty(notifyDTO.getSmsCode())) {
+                if (Strings.isNullOrEmpty(notifyReq.getSmsCode())) {
                     result.put(NotifyServiceEnums.SMS.getName(), NotifyConst.LACK_TEMPLATE_PARAMS_MSG);
                     return false;
                 }

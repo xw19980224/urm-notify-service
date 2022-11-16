@@ -1,4 +1,4 @@
-package com.hh.urm.notify.model.dto.message;
+package com.hh.urm.notify.model.req.notify;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SmsMessageDTO {
+public class SmsMessageReq {
     /**
      * 接收人
      */
@@ -26,6 +26,6 @@ public class SmsMessageDTO {
     /**
      * 短信参数
      */
-    private String[] templateParams;
+    private List<String> templateParams;
 
 }

@@ -1,15 +1,12 @@
 package com.hh.urm.notify.model.bo;
 
-import com.hh.urm.notify.model.dto.NotifyDataDTO;
-import com.hh.urm.notify.model.entity.SmsMetadata;
-import io.swagger.annotations.ApiModelProperty;
+import com.hh.urm.notify.model.req.notify.NotifyDataReq;
+import com.hh.urm.notify.model.entity.SmsTemplate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 /**
@@ -43,11 +40,11 @@ public class NotifyBo {
     /**
      * 短信模板对象
      */
-    private SmsMetadata smsMetadata;
+    private SmsTemplate smsTemplate;
 
     /**
      * 通知内容
      */
-    private List<NotifyDataDTO> data;
+    private List<NotifyDataReq> data;
 
 }

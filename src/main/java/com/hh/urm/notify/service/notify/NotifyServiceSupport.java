@@ -1,12 +1,10 @@
 package com.hh.urm.notify.service.notify;
 
-import com.hh.urm.notify.annotation.NotifyService;
-import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.stereotype.Service;
+import com.hh.urm.notify.enmus.NotifyServiceEnums;
+import com.hh.urm.notify.service.notify.handler.IConvertHandler;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,20 +18,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public class NotifyServiceSupport {
 
     @Resource
-    private List<IMessage> messageList;
+    private IConvertHandler smsConvert;
 
     /**
      * 策略组
      */
-    protected static Map<String, IMessage> notifyServiceConfig = new ConcurrentHashMap<>();
+    protected static Map<String, IConvertHandler> convertHandlerMaps = new ConcurrentHashMap<>();
 
     @PostConstruct
     public void init() {
-        messageList.forEach(item -> {
-            NotifyService notifyService = AnnotationUtils.findAnnotation(item.getClass(), NotifyService.class);
-            if (null != notifyService) {
-                notifyServiceConfig.put(notifyService.notifyService().getCode(), item);
-            }
-        });
+        convertHandlerMaps.put(NotifyServiceEnums.SMS.getCode(), smsConvert);
     }
 }

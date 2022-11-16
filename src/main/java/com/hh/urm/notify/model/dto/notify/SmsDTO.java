@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * @ClassName: SmsContentDTO
@@ -28,7 +28,7 @@ public class SmsDTO {
     /**
      * 发送的通知短信内容，短信内容不能超过64KB。
      */
-    private SmsContentDTO[] smsContent;
+    private List<SmsContentDTO> smsContent;
     /**
      * 扩展参数，在状态报告中会原样返回。
      */

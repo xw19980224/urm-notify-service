@@ -1,9 +1,7 @@
-package com.hh.urm.notify.model.dto;
+package com.hh.urm.notify.model.req.notify;
 
-import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -18,7 +16,7 @@ import java.util.List;
  * @Version: 1.0
  */
 @ApiModel("通知DTO")
-public class NotifyDTO implements Serializable {
+public class NotifyReq implements Serializable {
 
     private static final long serialVersionUID = 1160620297336378641L;
 
@@ -39,15 +37,19 @@ public class NotifyDTO implements Serializable {
     private String[] notifyType;
 
     /**
-     * 短信源数据code
+     * 短信模板code据code
      */
     @ApiModelProperty(value = "短信源数据code，当notifyType为0或1时，必填")
     private String smsCode;
 
-    @ApiModelProperty(value = "通知参数")
-    private List<NotifyDataDTO> data;
+    /**
+     * oneApp模板code
+     */
 
-    public NotifyDTO() {
+    @ApiModelProperty(value = "通知参数")
+    private List<NotifyDataReq> data;
+
+    public NotifyReq() {
     }
 
     public String getTraceId() {
@@ -82,11 +84,11 @@ public class NotifyDTO implements Serializable {
         this.smsCode = smsCode;
     }
 
-    public List<NotifyDataDTO> getData() {
+    public List<NotifyDataReq> getData() {
         return data;
     }
 
-    public void setData(List<NotifyDataDTO> data) {
+    public void setData(List<NotifyDataReq> data) {
         this.data = data;
     }
 }

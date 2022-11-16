@@ -75,7 +75,7 @@ public class NotifyConst {
         /**
          * 模板参数
          */
-        public final static String TEMPLATE_PARAMS = "templateParams";
+        public final static String TEMPLATE_PARAMS = "templateParas";
         /**
          * 发送方
          */

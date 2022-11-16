@@ -1,4 +1,4 @@
-package com.hh.urm.notify.model.dto.message;
+package com.hh.urm.notify.model.req.notify;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +12,7 @@ import java.util.List;
  * ClassName: MailMessageDTO
  * Description: 发邮件信息
  */
-public class MailMessageDTO implements Serializable {
+public class MailMessageReq implements Serializable {
     /***
      * 收件人列表
      */
@@ -28,10 +28,10 @@ public class MailMessageDTO implements Serializable {
      */
     private String content;
 
-    public MailMessageDTO() {
+    public MailMessageReq() {
     }
 
-    public MailMessageDTO(List<String> toMails, String title, String content) {
+    public MailMessageReq(List<String> toMails, String title, String content) {
         this.toMails = toMails;
         this.title = title;
         this.content = content;

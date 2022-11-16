@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 import java.util.Objects;
 
 /**
- * @ClassName: SmsMetadata
+ * @ClassName: SmsTemplate
  * @Author: MaxWell
  * @Description:
  * @Date: 2022/11/2 9:45
@@ -15,8 +15,8 @@ import java.util.Objects;
  */
 @Entity
 @GenericGenerator(name = "jpa-uuid", strategy = "uuid")
-@Table(name = "t_sms_metadata", schema = "notify", catalog = "notify")
-public class SmsMetadata {
+@Table(name = "t_sms_template", schema = "notify", catalog = "notify")
+public class SmsTemplate {
     /**
      * id
      */
@@ -191,7 +191,7 @@ public class SmsMetadata {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SmsMetadata that = (SmsMetadata) o;
+        SmsTemplate that = (SmsTemplate) o;
         return Objects.equals(code, that.code) && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(sender, that.sender) && Objects.equals(appKey, that.appKey) && Objects.equals(appSecret, that.appSecret) && Objects.equals(signature, that.signature) && Objects.equals(createTime, that.createTime) && Objects.equals(updateTime, that.updateTime) && Objects.equals(createBy, that.createBy) && Objects.equals(templateId, that.templateId) && Objects.equals(templateContent, that.templateContent);
     }
 
