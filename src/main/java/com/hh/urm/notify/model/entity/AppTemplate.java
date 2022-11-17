@@ -80,7 +80,7 @@ public class AppTemplate {
     }
 
     @Basic
-    @Column(name = "content", nullable = true, length = -1)
+    @Column(name = "notify_content", nullable = true, length = -1)
     public String getContent() {
         return content;
     }

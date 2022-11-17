@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
 import com.hh.urm.notify.consts.CommonConst;
 import com.hh.urm.notify.consts.ResultCodeConst;
-import com.hh.urm.notify.enmus.NotifyResultEnums;
+import com.hh.urm.notify.enums.NotifyResultEnums;
 import com.hh.urm.notify.utils.base.ServiceResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindException;

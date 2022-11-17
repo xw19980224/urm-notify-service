@@ -1,7 +1,7 @@
 package com.hh.urm.notify.service.notify;
 
-import com.hh.urm.notify.enmus.NotifyServiceEnums;
-import com.hh.urm.notify.service.notify.handler.IConvertHandler;
+import com.hh.urm.notify.enums.NotifyServiceEnums;
+import com.hh.urm.notify.service.notify.convert.IConvertHandler;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -20,6 +20,9 @@ public class NotifyServiceSupport {
     @Resource
     private IConvertHandler smsConvert;
 
+    @Resource
+    private IConvertHandler appConvert;
+
     /**
      * 策略组
      */
@@ -28,5 +31,6 @@ public class NotifyServiceSupport {
     @PostConstruct
     public void init() {
         convertHandlerMaps.put(NotifyServiceEnums.SMS.getCode(), smsConvert);
+        convertHandlerMaps.put(NotifyServiceEnums.ONE_APP.getCode(), appConvert);
     }
 }

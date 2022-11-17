@@ -1,4 +1,4 @@
-package com.hh.urm.notify.enmus;
+package com.hh.urm.notify.enums;
 
 /**
  * msg 定义

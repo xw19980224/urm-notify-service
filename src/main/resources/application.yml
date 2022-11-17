@@ -36,6 +36,7 @@ spring:
       ack-mode: manual_immediate
     urm_topics:
       sms_topic: urm_sms_notify_topic
+      notify_topic: urm_sms_notify_topic,urm_one_notify_topic
   jpa:
     hibernate:
       ddl-auto: none

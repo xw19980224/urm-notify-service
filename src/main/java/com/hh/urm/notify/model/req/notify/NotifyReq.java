@@ -30,11 +30,11 @@ public class NotifyReq implements Serializable {
     private String sign;
 
     /**
-     * 通知类型：{@link com.hh.urm.notify.enmus.NotifyServiceEnums}通知类型：1、短信 2、邮箱 3、APP 4、飞书 5、企微 6、其他
+     * 通知类型：{@link com.hh.urm.notify.enums.NotifyServiceEnums}通知类型：1、短信 2、邮箱 3、APP 4、飞书 5、企微 6、其他
      */
     @NotEmpty(message = "通知类型必填")
     @ApiModelProperty(value = "通知类型：1、短信 2、邮箱 3、APP 4、飞书 5、企微 6、其他")
-    private String[] notifyType;
+    private List<String> notifyType;
 
     /**
      * 短信模板code据code
@@ -45,6 +45,8 @@ public class NotifyReq implements Serializable {
     /**
      * oneApp模板code
      */
+    @ApiModelProperty(value = "oneApp模板code，当notifyType为0或3时，必填")
+    private String appCode;
 
     @ApiModelProperty(value = "通知参数")
     private List<NotifyDataReq> data;
@@ -68,11 +70,11 @@ public class NotifyReq implements Serializable {
         this.sign = sign;
     }
 
-    public String[] getNotifyType() {
+    public List<String> getNotifyType() {
         return notifyType;
     }
 
-    public void setNotifyType(String[] notifyType) {
+    public void setNotifyType(List<String> notifyType) {
         this.notifyType = notifyType;
     }
 
@@ -82,6 +84,14 @@ public class NotifyReq implements Serializable {
 
     public void setSmsCode(String smsCode) {
         this.smsCode = smsCode;
+    }
+
+    public String getAppCode() {
+        return appCode;
+    }
+
+    public void setAppCode(String appCode) {
+        this.appCode = appCode;
     }
 
     public List<NotifyDataReq> getData() {

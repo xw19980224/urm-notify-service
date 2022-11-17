@@ -2,12 +2,12 @@ package com.hh.urm.notify.service.notify.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hh.urm.notify.consts.NotifyConst;
-import com.hh.urm.notify.enmus.NotifyServiceEnums;
+import com.hh.urm.notify.enums.NotifyServiceEnums;
 import com.hh.urm.notify.model.bo.NotifyBo;
 import com.hh.urm.notify.model.req.notify.NotifyDataReq;
 import com.hh.urm.notify.service.notify.INotifyService;
 import com.hh.urm.notify.service.notify.NotifyServiceSupport;
-import com.hh.urm.notify.service.notify.handler.IConvertHandler;
+import com.hh.urm.notify.service.notify.convert.IConvertHandler;
 import com.hh.urm.notify.utils.TimeUtil;
 import com.hh.urm.notify.utils.base.ServiceResponse;
 import com.mongodb.BasicDBObject;
@@ -22,7 +22,6 @@ import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -57,7 +56,7 @@ public class NotifyServiceImpl extends NotifyServiceSupport implements INotifySe
 
         List<NotifyDataReq> data = notifyBo.getData();
 
-        List<String> notifyType = Arrays.stream(notifyBo.getNotifyType()).collect(Collectors.toList());
+        List<String> notifyType = notifyBo.getNotifyType();
 
         List<String> topicList = NotifyServiceEnums.getTopicList(notifyType);
 
@@ -65,8 +64,6 @@ public class NotifyServiceImpl extends NotifyServiceSupport implements INotifySe
         for (String topic : topicList) {
             // 获取通知类型
             String code = NotifyServiceEnums.getCodeByTopicName(topic);
-            // 获取模板名称，模板code
-            Pair<String, String> template = getTemplateCodeAndName(code, notifyBo);
             // 构建消息通知参数
             JSONObject jsonObject = buildKafkaParamsByTopic(code, notifyBo, data);
             // 发送MQ
@@ -79,7 +76,6 @@ public class NotifyServiceImpl extends NotifyServiceSupport implements INotifySe
                             traceId,
                             code,
                             NotifyConst.KafkaStateEnums.EXCEPTION.getCode(),
-                            template.getFirst(), template.getSecond(),
                             notifyBo, throwable.getMessage());
                 }
 
@@ -90,7 +86,6 @@ public class NotifyServiceImpl extends NotifyServiceSupport implements INotifySe
                             traceId,
                             code,
                             NotifyConst.KafkaStateEnums.READY.getCode(),
-                            template.getFirst(), template.getSecond(),
                             notifyBo, null);
                     log.info(topic + " - 生产者 发送消息成功：" + stringObjectSendResult.toString());
                 }
@@ -139,15 +134,13 @@ public class NotifyServiceImpl extends NotifyServiceSupport implements INotifySe
     /**
      * 记录发送历史
      *
-     * @param traceId      链路Id
-     * @param type         消息类型 {@link NotifyServiceEnums}
-     * @param status       消息状态 {@link NotifyConst.KafkaStateEnums}
-     * @param templateCode 模板Code
-     * @param templateName 模板名称
-     * @param notifyBo     通知内容
-     * @param msg          描述
+     * @param traceId  链路Id
+     * @param type     消息类型 {@link NotifyServiceEnums}
+     * @param status   消息状态 {@link NotifyConst.KafkaStateEnums}
+     * @param notifyBo 通知内容
+     * @param msg      描述
      */
-    public void recordHistory(String traceId, String type, int status, String templateCode, String templateName, NotifyBo notifyBo, String msg) {
+    public void recordHistory(String traceId, String type, int status, NotifyBo notifyBo, String msg) {
         String currDate = TimeUtil.formatYYYYMMDDHHMMSS(new Date());
         JSONObject dataInfo = new JSONObject();
 
@@ -160,8 +153,10 @@ public class NotifyServiceImpl extends NotifyServiceSupport implements INotifySe
         if (!Strings.isNullOrEmpty(msg)) {
             dataInfo.put(EXCEPTION, msg);
         }
-        dataInfo.put(NotifyConst.Sms.TEMPLATE_CODE, templateCode);
-        dataInfo.put(NotifyConst.Sms.TEMPLATE_NAME, templateName);
+        // 获取模板名称，模板code
+        Pair<String, String> template = getTemplateCodeAndName(type, notifyBo);
+        dataInfo.put(NotifyConst.Sms.TEMPLATE_CODE, template.getFirst());
+        dataInfo.put(NotifyConst.Sms.TEMPLATE_NAME, template.getSecond());
         List<BasicDBObject> data = objectToJsonObject(type, dataInfo, notifyBo);
 
         mongoTemplate.insert(data, T_USER_SEND_INFO_HISTORY);

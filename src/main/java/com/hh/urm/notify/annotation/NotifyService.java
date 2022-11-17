@@ -1,6 +1,6 @@
 package com.hh.urm.notify.annotation;
 
-import com.hh.urm.notify.enmus.NotifyServiceEnums;
+import com.hh.urm.notify.enums.NotifyServiceEnums;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.*;

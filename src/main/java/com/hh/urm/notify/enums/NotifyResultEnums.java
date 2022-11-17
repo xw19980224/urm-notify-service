@@ -1,4 +1,4 @@
-package com.hh.urm.notify.enmus;
+package com.hh.urm.notify.enums;
 
 /**
  * 通知接口返回状态枚举

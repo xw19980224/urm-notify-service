@@ -6,7 +6,7 @@ import com.hh.urm.notify.model.entity.AppTemplate;
 import com.hh.urm.notify.model.entity.SmsTemplate;
 import com.hh.urm.notify.repository.AppTemplateRepository;
 import com.hh.urm.notify.repository.SmsTemplateRepository;
-import com.hh.urm.notify.service.notify.adapter.IMessage;
+import com.hh.urm.notify.service.notify.handler.INotifyHandler;
 import com.hh.urm.notify.utils.TimeUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,7 +36,7 @@ public class BeanTest {
     private AppTemplateRepository appTemplateRepository;
 
     @Autowired
-    private IMessage iMessage;
+    private INotifyHandler iNotifyHandler;
 
     @Test
     public void test() {

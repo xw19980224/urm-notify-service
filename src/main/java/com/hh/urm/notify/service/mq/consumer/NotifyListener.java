@@ -1,8 +1,8 @@
 package com.hh.urm.notify.service.mq.consumer;
 
 import com.alibaba.fastjson.JSONObject;
-import com.hh.urm.notify.service.notify.adapter.IMessage;
-import com.hh.urm.notify.service.notify.NotifyServiceSupport;
+import com.hh.urm.notify.service.notify.handler.INotifyHandler;
+import com.hh.urm.notify.service.notify.handler.MessageHandOutFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -12,9 +12,10 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.Objects;
 import java.util.Optional;
 
-import static com.hh.urm.notify.consts.CommonConst.CONFIG;
+import static com.hh.urm.notify.consts.CommonConst.*;
 
 /**
  * @ClassName: NotifyListener
@@ -25,13 +26,13 @@ import static com.hh.urm.notify.consts.CommonConst.CONFIG;
  */
 @Slf4j
 @Component
-public class NotifyListener extends NotifyServiceSupport {
+public class NotifyListener {
 
     @Resource
-    private IMessage smsService;
+    private MessageHandOutFactory messageHandOutFactory;
 
-    @KafkaListener(id = "sms_topic", topics = "#{'${spring.kafka.urm_topics.sms_topic}'}")
-    public void onMessage(ConsumerRecord<?, ?> record, Acknowledgment ack, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+    @KafkaListener(id = "notify_topic", topics = "#{'${spring.kafka.urm_topics.notify_topic}'.split(',')}")
+    public void consumer(ConsumerRecord<?, ?> record, Acknowledgment ack, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
         Optional<?> message = Optional.ofNullable(record.value());
 
@@ -41,14 +42,30 @@ public class NotifyListener extends NotifyServiceSupport {
         }
 
         // 2、处理消息
-        String jsonStr = (String) message.get();
+        try {
+            String jsonStr = (String) message.get();
 
-        JSONObject jsonObject = JSONObject.parseObject(jsonStr);
-        JSONObject config = jsonObject.getJSONObject(CONFIG);
+            JSONObject jsonObject = JSONObject.parseObject(jsonStr);
+            String traceId = ((String) jsonObject.getOrDefault(TRACE_ID, ""));
+            String type = ((String) jsonObject.getOrDefault(TYPE, ""));
+            JSONObject config = jsonObject.getJSONObject(CONFIG);
 
-        JSONObject result = smsService.sendMessage(jsonObject, config);
+            // 3、获取处理器并执行
+            INotifyHandler notifyHandler = messageHandOutFactory.getNotifyHandler(type);
+            if (Objects.isNull(notifyHandler)) {
+                log.error("traceId:{},topic:{},kafka consumer breakOff, result:{}", traceId, topic, "暂无消息处理器");
+                return;
+            }
+            notifyHandler.handler(jsonObject, config);
 
-        // 4. 消息消费完成
-        ack.acknowledge();
+
+        } catch (Exception e) {
+            log.error("消费MQ消息，失败 topic：{} message：{}", topic, message.get());
+            throw e;
+        } finally {
+            // 4. 消息消费完成
+            ack.acknowledge();
+        }
     }
+
 }

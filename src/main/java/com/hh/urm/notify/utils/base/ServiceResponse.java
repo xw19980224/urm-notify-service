@@ -1,9 +1,7 @@
 package com.hh.urm.notify.utils.base;
 
-import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.MoreObjects;
-import com.hh.urm.notify.enmus.NotifyResultEnums;
-import com.hh.urm.notify.enmus.ResultMsg;
+import com.hh.urm.notify.enums.NotifyResultEnums;
 import com.hh.urm.notify.utils.TimeUtil;
 import lombok.Getter;
 import lombok.Setter;

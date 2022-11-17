@@ -1,12 +1,15 @@
-package com.hh.urm.notify.service.notify.adapter.impl;
+package com.hh.urm.notify.service.notify.handler.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
-import com.hh.urm.notify.model.req.notify.SmsMessageReq;
+import com.hh.urm.notify.annotation.NotifyService;
+import com.hh.urm.notify.enums.NotifyServiceEnums;
 import com.hh.urm.notify.model.dto.notify.SmsContentDTO;
 import com.hh.urm.notify.model.dto.notify.SmsDTO;
-import com.hh.urm.notify.service.notify.adapter.IMessage;
+import com.hh.urm.notify.model.req.notify.SmsMessageReq;
+import com.hh.urm.notify.service.notify.handler.BaseNotifyHandler;
+import com.hh.urm.notify.service.notify.handler.INotifyHandler;
 import com.hh.urm.notify.utils.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
@@ -18,7 +21,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
-import org.springframework.stereotype.Service;
 
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -41,8 +43,8 @@ import static com.hh.urm.notify.consts.NotifyConst.TEMPLATE_ID;
  * @Version: 1.0
  */
 @Slf4j
-@Service(value = "smsService")
-public class SmsServiceImpl implements IMessage {
+@NotifyService(notifyService = NotifyServiceEnums.SMS)
+public class SmsHandler extends BaseNotifyHandler implements INotifyHandler {
 
     @Value("${sms.host}")
     private String host;
@@ -53,7 +55,7 @@ public class SmsServiceImpl implements IMessage {
     private String appSecret = "";
 
     @Override
-    public JSONObject sendMessage(JSONObject jsonObject, JSONObject config) {
+    public JSONObject handler(JSONObject jsonObject, JSONObject config) {
         String traceId = jsonObject.getString(TRACE_ID);
 
         JSONObject result = new JSONObject();
@@ -162,32 +164,32 @@ public class SmsServiceImpl implements IMessage {
         }
     }
 
-        protected void recordHistory (JSONObject params, String sendResp){
+    protected void recordHistory(JSONObject params, String sendResp) {
 
-        }
-
-        private String paramsToString (JSONObject params) throws Exception {
-            StringBuilder sb = new StringBuilder();
-            String temp = "";
-
-            for (String key : params.keySet()) {
-                String value = params.getString(key);
-                if (Strings.isNullOrEmpty(value)) {
-                    continue;
-                }
-                temp = URLEncoder.encode(value, "UTF-8");
-                sb.append(key).append("=").append(temp).append("&");
-            }
-            return sb.deleteCharAt(sb.length() - 1).toString();
-        }
-
-        private String getXWsse () {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-            String time = sdf.format(new Date());
-            String nonce = UUID.randomUUID().toString().replace("-", "");
-            byte[] passwordDigest = DigestUtils.sha256(nonce + time + appSecret);
-            String hexDigest = Hex.encodeHexString(passwordDigest);
-            String passwordDigestBase64Str = Base64.getEncoder().encodeToString(hexDigest.getBytes());
-            return String.format("UsernameToken Username=\"%s\",PasswordDigest=\"%s\",Nonce=\"%s\",Created=\"%s\"", appKey, passwordDigestBase64Str, nonce, time);
-        }
     }
+
+    private String paramsToString(JSONObject params) throws Exception {
+        StringBuilder sb = new StringBuilder();
+        String temp = "";
+
+        for (String key : params.keySet()) {
+            String value = params.getString(key);
+            if (Strings.isNullOrEmpty(value)) {
+                continue;
+            }
+            temp = URLEncoder.encode(value, "UTF-8");
+            sb.append(key).append("=").append(temp).append("&");
+        }
+        return sb.deleteCharAt(sb.length() - 1).toString();
+    }
+
+    private String getXWsse() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        String time = sdf.format(new Date());
+        String nonce = UUID.randomUUID().toString().replace("-", "");
+        byte[] passwordDigest = DigestUtils.sha256(nonce + time + appSecret);
+        String hexDigest = Hex.encodeHexString(passwordDigest);
+        String passwordDigestBase64Str = Base64.getEncoder().encodeToString(hexDigest.getBytes());
+        return String.format("UsernameToken Username=\"%s\",PasswordDigest=\"%s\",Nonce=\"%s\",Created=\"%s\"", appKey, passwordDigestBase64Str, nonce, time);
+    }
+}

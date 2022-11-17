@@ -1,5 +1,6 @@
 package com.hh.urm.notify.model.bo;
 
+import com.hh.urm.notify.model.entity.AppTemplate;
 import com.hh.urm.notify.model.req.notify.NotifyDataReq;
 import com.hh.urm.notify.model.entity.SmsTemplate;
 import lombok.AllArgsConstructor;
@@ -33,14 +34,19 @@ public class NotifyBo {
     private String sign;
 
     /**
-     * 通知类型：{@link com.hh.urm.notify.enmus.NotifyServiceEnums}通知类型：0、All 1、短信 2、邮箱 3、APP 4、飞书 5、企微 6、其他
+     * 通知类型：{@link com.hh.urm.notify.enums.NotifyServiceEnums}通知类型：0、All 1、短信 2、邮箱 3、APP 4、飞书 5、企微 6、其他
      */
-    private String[] notifyType;
+    private List<String> notifyType;
 
     /**
      * 短信模板对象
      */
     private SmsTemplate smsTemplate;
+
+    /**
+     * 站内信模板
+     */
+    private AppTemplate appTemplate;
 
     /**
      * 通知内容

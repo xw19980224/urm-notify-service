@@ -1,4 +1,4 @@
-package com.hh.urm.notify.service.notify.handler;
+package com.hh.urm.notify.service.notify.convert;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hh.urm.notify.model.bo.NotifyBo;

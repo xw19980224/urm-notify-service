@@ -1,8 +1,9 @@
-package com.hh.urm.notify.enmus;
+package com.hh.urm.notify.enums;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,7 +30,7 @@ public enum NotifyServiceEnums {
     /**
      * OneApp
      */
-    ONE_APP("3", "oneApp", "oneAppService", "urm_oneApp_notify_topic"),
+    ONE_APP("3", "oneApp", "oneAppService", "urm_one_notify_topic"),
     /**
      * 飞书
      */
@@ -109,7 +110,7 @@ public enum NotifyServiceEnums {
      * @param codes
      * @return 是否包含未知值
      */
-    public static Boolean checkCodeIsExist(String[] codes) {
+    public static Boolean checkCodeIsExist(List<String> codes) {
         boolean exist = true;
         for (String code : codes) {
             if (getServiceNameByCode(code) == null) {
@@ -178,5 +179,14 @@ public enum NotifyServiceEnums {
             }
         }
         return null;
+    }
+
+    /**
+     * 获取所有通知类型
+     *
+     * @return
+     */
+    public static List<String> getAllCode() {
+        return Arrays.stream(values()).map(NotifyServiceEnums::getCode).filter(itemCode -> !itemCode.equals(ALL.getCode())).collect(Collectors.toList());
     }
 }
