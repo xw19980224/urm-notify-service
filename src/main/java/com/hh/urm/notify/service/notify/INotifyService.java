@@ -15,8 +15,8 @@ public interface INotifyService {
     /**
      * 发送通知
      *
-     * @param notifyBo 消息参数 {@link NotifyReq}
+     * @param notifyBo 消息参数 {@link NotifyBo}
      * @return 响应结果
      */
-    ServiceResponse<Object> sendMessage(NotifyBo notifyBo);
+    ServiceResponse<Object> notify(NotifyBo notifyBo);
 }

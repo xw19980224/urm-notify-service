@@ -4,7 +4,7 @@ package com.hh.urm.notify.model.req.notify;
 /**
  * @ClassName: NotifyDataDTO
  * @Author: MaxWell
- * @Description:
+ * @Description: 通知参数
  * @Date: 2022/11/4 14:38
  * @Version: 1.0
  */
@@ -12,11 +12,11 @@ public class NotifyDataReq {
 
     private String superId;
 
-    private SmsMessageReq smsMessage;
+    private SmsReq sms;
 
-    private AppMessageReq appMessage;
+    private AppReq app;
 
-    private MailMessageReq mailMessage;
+    private MailReq mail;
 
     public String getSuperId() {
         return superId;
@@ -26,28 +26,27 @@ public class NotifyDataReq {
         this.superId = superId;
     }
 
-    public SmsMessageReq getSmsMessage() {
-        return smsMessage;
+    public SmsReq getSms() {
+        return sms;
     }
 
-    public void setSmsMessage(SmsMessageReq smsMessage) {
-        this.smsMessage = smsMessage;
+    public void setSms(SmsReq sms) {
+        this.sms = sms;
     }
 
-    public AppMessageReq getAppMessage() {
-        return appMessage;
+    public AppReq getApp() {
+        return app;
     }
 
-    public void setAppMessage(AppMessageReq appMessage) {
-        this.appMessage = appMessage;
+    public void setApp(AppReq app) {
+        this.app = app;
     }
 
-    public MailMessageReq getMailMessage() {
-        return mailMessage;
+    public MailReq getMail() {
+        return mail;
     }
 
-    public void setMailMessage(MailMessageReq mailMessage) {
-        this.mailMessage = mailMessage;
+    public void setMail(MailReq mail) {
+        this.mail = mail;
     }
-
 }

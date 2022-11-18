@@ -12,8 +12,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -26,19 +29,18 @@ import java.util.stream.Collectors;
  * @Version: 1.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = UrmNotifyApplication.class)
+@SpringBootTest
 public class BeanTest {
 
-    @Autowired
+    @Resource
     private SmsTemplateRepository smsTemplateRepository;
 
-    @Autowired
+    @Resource
     private AppTemplateRepository appTemplateRepository;
 
-    @Autowired
-    private INotifyHandler iNotifyHandler;
-
     @Test
+    @Transactional
+    @Rollback(false)
     public void test() {
         SmsTemplate smsTemplate = new SmsTemplate();
         Timestamp nowTime = TimeUtil.nowTimestamp();
@@ -55,13 +57,16 @@ public class BeanTest {
     }
 
     @Test
+    @Transactional
+    @Rollback(false)
     public void test1() {
         AppTemplate appTemplate = new AppTemplate();
         appTemplate.setBusinessType(10000005);
-        appTemplate.setTitle("20221027");
-        appTemplate.setContent("2022102701");
-        appTemplate.setjPushType(0);
+        appTemplate.setTitle("您有一笔即将过期积分");
+        appTemplate.setContent("【高合HiPhi】尊敬的用户，您的高合HiPhiApp的{points}贝还有{day}天即将到期，请尽快点击URLq前往高合之选商城进行兑换使用");
+        appTemplate.setjPushType(2);
         appTemplate.setPushTypes("0,1");
+        appTemplate.setLinkUrl("https://eeh5.hiphi.com/appv2/#/task");
         appTemplateRepository.save(appTemplate);
     }
 

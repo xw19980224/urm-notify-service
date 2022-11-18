@@ -46,8 +46,14 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         temp:
           use_jdbc_metadata_defaults: false
-
-sms:
-  host: https://rtcsms.cn-north-1.myhuaweicloud.com:10743
-  url:
-    batchUrl: /sms/batchSendDiffSms/v1
+notify:
+  sms:
+    host: https://rtcsms.cn-north-1.myhuaweicloud.com:10743
+    url:
+      batchUrl: /sms/batchSendDiffSms/v1
+  app:
+    host: http://119.3.90.36:31469
+    ak: 7f92ba784eee11eaa84e10e7c63338a5
+    sk: 85a37e984eee11eaa84e10e7c63338a5
+    url:
+      pushPath: /oneapp-content-service/v2/api/message/serviceMessagePushV2

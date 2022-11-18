@@ -5,10 +5,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.hh.urm.notify.annotation.NotifyService;
 import com.hh.urm.notify.enums.NotifyServiceEnums;
+import com.hh.urm.notify.model.dto.message.SmsMessageDTO;
 import com.hh.urm.notify.model.dto.notify.SmsContentDTO;
 import com.hh.urm.notify.model.dto.notify.SmsDTO;
-import com.hh.urm.notify.model.req.notify.SmsMessageReq;
-import com.hh.urm.notify.service.notify.handler.BaseNotifyHandler;
+import com.hh.urm.notify.model.entity.SmsTemplate;
+import com.hh.urm.notify.service.BaseService;
 import com.hh.urm.notify.service.notify.handler.INotifyHandler;
 import com.hh.urm.notify.utils.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -30,9 +31,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.hh.urm.notify.consts.CommonConst.*;
-import static com.hh.urm.notify.consts.NotifyConst.Sms.*;
-import static com.hh.urm.notify.consts.NotifyConst.TEMPLATE_ID;
+import static com.hh.urm.notify.consts.CommonConst.EXCEPTION;
+import static com.hh.urm.notify.consts.CommonConst.FAILED;
 
 
 /**
@@ -44,29 +44,30 @@ import static com.hh.urm.notify.consts.NotifyConst.TEMPLATE_ID;
  */
 @Slf4j
 @NotifyService(notifyService = NotifyServiceEnums.SMS)
-public class SmsHandler extends BaseNotifyHandler implements INotifyHandler {
+public class SmsHandler extends BaseService implements INotifyHandler {
 
-    @Value("${sms.host}")
+    @Value("${notify.sms.host}")
     private String host;
-    @Value("${sms.url.batchUrl}")
+    @Value("${notify.sms.url.batchUrl}")
     private String batchUrl;
 
     private String appKey = "";
     private String appSecret = "";
 
     @Override
-    public JSONObject handler(JSONObject jsonObject, JSONObject config) {
-        String traceId = jsonObject.getString(TRACE_ID);
+    public JSONObject handler(String traceId, String dataStr, String config) {
 
         JSONObject result = new JSONObject();
+        SmsTemplate smsTemplate = JSONObject.parseObject(config, SmsTemplate.class);
+        List<SmsMessageDTO> data = JSONArray.parseArray(dataStr, SmsMessageDTO.class);
         // 1、检查参数
-        Boolean checkResult = checkParams(jsonObject, result);
+        Boolean checkResult = checkParams(data, smsTemplate, result);
         if (!checkResult) {
             return result;
         }
 
         // 2、构建参数
-        Pair<Boolean, JSONObject> buildParamsResult = buildParams(jsonObject, config, result);
+        Pair<Boolean, JSONObject> buildParamsResult = buildParams(data, smsTemplate, result);
         if (!buildParamsResult.getFirst()) {
             return result;
         }
@@ -87,14 +88,10 @@ public class SmsHandler extends BaseNotifyHandler implements INotifyHandler {
         return result;
     }
 
-    protected Boolean checkParams(JSONObject jsonObject, JSONObject result) {
+    protected Boolean checkParams(List<SmsMessageDTO> data, SmsTemplate smsTemplate, JSONObject result) {
 
-        // 1、获取参数
-        String dataStr = (String) jsonObject.getOrDefault(DATA, "");
-        List<SmsMessageReq> smsMessageReqs = JSONObject.parseArray(dataStr, SmsMessageReq.class);
-
-        // 2、校验参数
-        if (smsMessageReqs.isEmpty()) {
+        // 1、校验参数
+        if (data.isEmpty()) {
             getResultMsg(result, "接收者不存在", FAILED);
             return false;
         }
@@ -102,18 +99,16 @@ public class SmsHandler extends BaseNotifyHandler implements INotifyHandler {
         return true;
     }
 
-    protected Pair<Boolean, JSONObject> buildParams(JSONObject jsonObject, JSONObject config, JSONObject result) {
-        String dataStr = (String) jsonObject.getOrDefault(DATA, "");
-        List<SmsMessageReq> smsMessageReqs = JSONArray.parseArray(dataStr, SmsMessageReq.class);
+    protected Pair<Boolean, JSONObject> buildParams(List<SmsMessageDTO> data, SmsTemplate smsTemplate, JSONObject result) {
 
-        String templateId = (String) config.getOrDefault(TEMPLATE_ID, "");
-        String sender = (String) config.getOrDefault(SENDER, "");
-        String signature = (String) config.getOrDefault(SIGNATURE, "");
-        String statusCallback = (String) config.getOrDefault(STATUS_CALL_BACK, "");
-        String extend = (String) config.getOrDefault(EXTEND, "");
+        String templateId = smsTemplate.getTemplateId();
+        String sender = smsTemplate.getSender();
+        String signature = smsTemplate.getSignature();
+        String statusCallback = smsTemplate.getStatusCallBack();
+        String extend = smsTemplate.getExtend();
 
-        appKey = ((String) config.getOrDefault(APP_KEY, ""));
-        appSecret = ((String) config.getOrDefault(APP_SECRET, ""));
+        appKey = smsTemplate.getAppKey();
+        appSecret = smsTemplate.getAppSecret();
 
         SmsDTO smsDTO = new SmsDTO();
         smsDTO.setFrom(sender);
@@ -124,7 +119,7 @@ public class SmsHandler extends BaseNotifyHandler implements INotifyHandler {
             smsDTO.setExtend(extend);
         }
 
-        List<SmsContentDTO> collect = smsMessageReqs.stream().map(item -> {
+        List<SmsContentDTO> collect = data.stream().map(item -> {
             String receiver = item.getReceiver();
             List<String> templateParams = item.getTemplateParams();
             SmsContentDTO smsContentDTO = new SmsContentDTO();

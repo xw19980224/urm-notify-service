@@ -65,6 +65,14 @@ public class SmsTemplate {
      * 短信模板内容
      */
     private String templateContent;
+    /**
+     * 拓展字段
+     */
+    private String extend;
+    /**
+     * 回调地址
+     */
+    private String statusCallBack;
 
     @Id
     @Column(name = "code", nullable = false, length = 255)
@@ -187,10 +195,34 @@ public class SmsTemplate {
         this.templateContent = templateContent;
     }
 
+    @Basic
+    @Column(name = "extend", nullable = true, length = -1)
+    public String getExtend() {
+        return extend;
+    }
+
+    public void setExtend(String extend) {
+        this.extend = extend;
+    }
+
+    @Basic
+    @Column(name = "status_call_back", nullable = true, length = -1)
+    public String getStatusCallBack() {
+        return statusCallBack;
+    }
+
+    public void setStatusCallBack(String statusCallBack) {
+        this.statusCallBack = statusCallBack;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         SmsTemplate that = (SmsTemplate) o;
         return Objects.equals(code, that.code) && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(sender, that.sender) && Objects.equals(appKey, that.appKey) && Objects.equals(appSecret, that.appSecret) && Objects.equals(signature, that.signature) && Objects.equals(createTime, that.createTime) && Objects.equals(updateTime, that.updateTime) && Objects.equals(createBy, that.createBy) && Objects.equals(templateId, that.templateId) && Objects.equals(templateContent, that.templateContent);
     }

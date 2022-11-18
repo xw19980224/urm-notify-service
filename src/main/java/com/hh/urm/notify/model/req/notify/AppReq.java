@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * @ClassName: AppMessageDTO
  * @Author: MaxWell
@@ -16,7 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AppMessageReq {
+public class AppReq {
 
     /**
      * OneApp的用户Id
@@ -27,11 +29,12 @@ public class AppMessageReq {
      */
     private String vin;
     /**
-     * 通知内容
+     * 通知标题参数
      */
-    private String content;
+    private List<String> titleParams;
     /**
-     * 通知标题
+     * 通知内容参数
      */
-    private String title;
+    private List<String> contentParams;
+
 }

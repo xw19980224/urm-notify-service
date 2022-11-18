@@ -1,18 +1,21 @@
-package com.hh.urm.notify.service.notify.handler;
+package com.hh.urm.notify.service;
 
 import com.alibaba.fastjson.JSONObject;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.logging.Logger;
 
 import static com.hh.urm.notify.consts.CommonConst.MESSAGE;
 import static com.hh.urm.notify.consts.CommonConst.STATUS;
 
 /**
- * @ClassName: BaseHandler
+ * @ClassName: BaseService
  * @Author: MaxWell
  * @Description:
  * @Date: 2022/11/17 17:01
  * @Version: 1.0
  */
-public class BaseNotifyHandler {
+public class BaseService {
 
     /**
      * 结果构造

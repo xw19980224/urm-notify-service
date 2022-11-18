@@ -44,8 +44,8 @@ public class NotifyController {
     private NotifyParamsCheckFactory notifyParamsCheckFactory;
 
     @ApiOperation(value = "消息通知接口", notes = "通知接口", httpMethod = "POST")
-    @PostMapping("/sendMessage")
-    public ServiceResponse<Object> sendMessage(@Validated @RequestBody NotifyReq notifyReq) {
+    @PostMapping("/send")
+    public ServiceResponse<Object> send(@Validated @RequestBody NotifyReq notifyReq) {
         String traceId = notifyReq.getTraceId();
 
         // 1、校验通知类型
@@ -86,7 +86,7 @@ public class NotifyController {
             }
         }
 
-        return notifyService.sendMessage(notifyBo);
+        return notifyService.notify(notifyBo);
 
     }
 

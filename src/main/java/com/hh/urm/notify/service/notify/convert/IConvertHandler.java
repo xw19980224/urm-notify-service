@@ -21,6 +21,6 @@ public interface IConvertHandler {
      *
      * @return Pair 1、短信模板 2、消息内容
      */
-    Pair<JSONObject, String> convert(NotifyBo notifyBo, List<NotifyDataReq> data);
+    Pair<String, String> convert(NotifyBo notifyBo, List<NotifyDataReq> data);
 
 }

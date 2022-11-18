@@ -12,7 +12,7 @@ import java.util.List;
  * ClassName: MailMessageDTO
  * Description: 发邮件信息
  */
-public class MailMessageReq implements Serializable {
+public class MailReq implements Serializable {
     /***
      * 收件人列表
      */
@@ -28,10 +28,10 @@ public class MailMessageReq implements Serializable {
      */
     private String content;
 
-    public MailMessageReq() {
+    public MailReq() {
     }
 
-    public MailMessageReq(List<String> toMails, String title, String content) {
+    public MailReq(List<String> toMails, String title, String content) {
         this.toMails = toMails;
         this.title = title;
         this.content = content;

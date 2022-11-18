@@ -1,5 +1,6 @@
 package com.hh.urm.notify.service.mq.consumer;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hh.urm.notify.service.notify.handler.INotifyHandler;
 import com.hh.urm.notify.service.notify.handler.MessageHandOutFactory;
@@ -12,6 +13,7 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -48,7 +50,9 @@ public class NotifyListener {
             JSONObject jsonObject = JSONObject.parseObject(jsonStr);
             String traceId = ((String) jsonObject.getOrDefault(TRACE_ID, ""));
             String type = ((String) jsonObject.getOrDefault(TYPE, ""));
-            JSONObject config = jsonObject.getJSONObject(CONFIG);
+            String config = (String) jsonObject.getOrDefault(CONFIG, "");
+
+            String dataStr = (String) jsonObject.getOrDefault(DATA, "");
 
             // 3、获取处理器并执行
             INotifyHandler notifyHandler = messageHandOutFactory.getNotifyHandler(type);
@@ -56,7 +60,7 @@ public class NotifyListener {
                 log.error("traceId:{},topic:{},kafka consumer breakOff, result:{}", traceId, topic, "暂无消息处理器");
                 return;
             }
-            notifyHandler.handler(jsonObject, config);
+            notifyHandler.handler(traceId, dataStr, config);
 
 
         } catch (Exception e) {

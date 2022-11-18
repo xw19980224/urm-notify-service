@@ -49,7 +49,7 @@ public class NotifyServiceImpl extends NotifyServiceSupport implements INotifySe
     private MongoTemplate mongoTemplate;
 
     @Override
-    public ServiceResponse<Object> sendMessage(NotifyBo notifyBo) {
+    public ServiceResponse<Object> notify(NotifyBo notifyBo) {
         JSONObject result = new JSONObject();
 
         String traceId = notifyBo.getTraceId();
@@ -108,7 +108,7 @@ public class NotifyServiceImpl extends NotifyServiceSupport implements INotifySe
 
         // 获取指定类型的配置和数据
         IConvertHandler iConvertHandler = convertHandlerMaps.get(code);
-        Pair<JSONObject, String> convert = iConvertHandler.convert(notifyBo, data);
+        Pair<String, String> convert = iConvertHandler.convert(notifyBo, data);
 
         jsonObject.put(TRACE_ID, notifyBo.getTraceId());
         jsonObject.put(TYPE, code);
@@ -176,15 +176,15 @@ public class NotifyServiceImpl extends NotifyServiceSupport implements INotifySe
             jsonObject.putAll(dataInfo);
             jsonObject.put(SUPER_ID, notifyData.getSuperId());
 
-            if (!Objects.isNull(notifyData.getSmsMessage()) && Objects.equals(type, NotifyServiceEnums.SMS.getCode())) {
-                jsonObject.putAll(JSONObject.parseObject(JSONObject.toJSONString(notifyData.getSmsMessage())));
+            if (!Objects.isNull(notifyData.getSms()) && Objects.equals(type, NotifyServiceEnums.SMS.getCode())) {
+                jsonObject.putAll(JSONObject.parseObject(JSONObject.toJSONString(notifyData.getSms())));
             }
 
-            if (!Objects.isNull(notifyData.getMailMessage()) && Objects.equals(type, NotifyServiceEnums.MAIL.getCode())) {
-                jsonObject.putAll(JSONObject.parseObject(JSONObject.toJSONString(notifyData.getMailMessage())));
+            if (!Objects.isNull(notifyData.getMail()) && Objects.equals(type, NotifyServiceEnums.MAIL.getCode())) {
+                jsonObject.putAll(JSONObject.parseObject(JSONObject.toJSONString(notifyData.getMail())));
             }
-            if (!Objects.isNull(notifyData.getAppMessage()) && Objects.equals(type, NotifyServiceEnums.ONE_APP.getCode())) {
-                jsonObject.putAll(JSONObject.parseObject(JSONObject.toJSONString(notifyData.getAppMessage())));
+            if (!Objects.isNull(notifyData.getApp()) && Objects.equals(type, NotifyServiceEnums.ONE_APP.getCode())) {
+                jsonObject.putAll(JSONObject.parseObject(JSONObject.toJSONString(notifyData.getApp())));
             }
             return jsonObject;
         }).collect(Collectors.toList());

@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @ClassName: NotifyDTO
  * @Author: MaxWell
- * @Description: 通知参数
+ * @Description: 通知请求参数
  * @Date: 2022/10/24 15:31
  * @Version: 1.0
  */

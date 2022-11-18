@@ -12,10 +12,11 @@ import com.alibaba.fastjson.JSONObject;
 public interface INotifyHandler {
 
     /**
-     * @param jsonObject 通知内容
-     * @param config     通知配置
+     * @param traceId 链路Id
+     * @param dataStr 通知内容
+     * @param config  通知配置
      * @return 处理结果
      */
-    JSONObject handler(JSONObject jsonObject, JSONObject config);
+    JSONObject handler(String traceId, String dataStr, String config);
 
 }
