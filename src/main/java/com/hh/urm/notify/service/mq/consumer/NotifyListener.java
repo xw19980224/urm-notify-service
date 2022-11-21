@@ -33,7 +33,7 @@ public class NotifyListener {
     @Resource
     private MessageHandOutFactory messageHandOutFactory;
 
-    @KafkaListener(id = "notify_topic", topics = "#{'${spring.kafka.urm_topics.notify_topic}'.split(',')}")
+//    @KafkaListener(id = "notify_topic", topics = "#{'${spring.kafka.urm_topics.notify_topic}'.split(',')}")
     public void consumer(ConsumerRecord<?, ?> record, Acknowledgment ack, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
         Optional<?> message = Optional.ofNullable(record.value());

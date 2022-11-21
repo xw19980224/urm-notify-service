@@ -128,6 +128,9 @@ public class NotifyServiceImpl extends NotifyServiceSupport implements INotifySe
         if (NotifyServiceEnums.SMS.getCode().equals(code)) {
             return Pair.of(notifyBo.getSmsTemplate().getCode(), notifyBo.getSmsTemplate().getName());
         }
+        if (NotifyServiceEnums.ONE_APP.getCode().equals(code)) {
+            return Pair.of(notifyBo.getAppTemplate().getCode(), notifyBo.getAppTemplate().getTitle());
+        }
         return Pair.of("", "");
     }
 
@@ -177,14 +180,15 @@ public class NotifyServiceImpl extends NotifyServiceSupport implements INotifySe
             jsonObject.put(SUPER_ID, notifyData.getSuperId());
 
             if (!Objects.isNull(notifyData.getSms()) && Objects.equals(type, NotifyServiceEnums.SMS.getCode())) {
-                jsonObject.putAll(JSONObject.parseObject(JSONObject.toJSONString(notifyData.getSms())));
+                jsonObject.put(NotifyServiceEnums.SMS.getName(), JSONObject.parseObject(JSONObject.toJSONString(notifyData.getSms())));
             }
 
             if (!Objects.isNull(notifyData.getMail()) && Objects.equals(type, NotifyServiceEnums.MAIL.getCode())) {
-                jsonObject.putAll(JSONObject.parseObject(JSONObject.toJSONString(notifyData.getMail())));
+                jsonObject.put(NotifyServiceEnums.MAIL.getName(), JSONObject.parseObject(JSONObject.toJSONString(notifyData.getMail())));
+
             }
             if (!Objects.isNull(notifyData.getApp()) && Objects.equals(type, NotifyServiceEnums.ONE_APP.getCode())) {
-                jsonObject.putAll(JSONObject.parseObject(JSONObject.toJSONString(notifyData.getApp())));
+                jsonObject.put(NotifyServiceEnums.ONE_APP.getName(), JSONObject.parseObject(JSONObject.toJSONString(notifyData.getApp())));
             }
             return jsonObject;
         }).collect(Collectors.toList());

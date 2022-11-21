@@ -55,7 +55,7 @@ public class DemoController {
         AppTemplate appTemplate = new AppTemplate();
         appTemplate.setBusinessType(10000005);
         appTemplate.setTitle("您有一笔即将过期积分");
-        appTemplate.setContent("【高合HiPhi】尊敬的用户，您的高合HiPhiApp的{points}贝还有{day}天即将到期，请尽快点击URLq前往高合之选商城进行兑换使用");
+        appTemplate.setNotifyContent("【高合HiPhi】尊敬的用户，您的高合HiPhiApp的{points}贝还有{day}天即将到期，请尽快点击URLq前往高合之选商城进行兑换使用");
         appTemplate.setjPushType(2);
         appTemplate.setPushTypes("0,1");
         appTemplate.setLinkUrl("https://eeh5.hiphi.com/appv2/#/task");

@@ -86,7 +86,7 @@ public class AppHandler extends BaseService implements INotifyHandler {
 
         List<NotifyServicePushFormV2> collect = data.stream().map(item -> {
             String title = appTemplate.getTitle();
-            String content = appTemplate.getContent();
+            String content = appTemplate.getNotifyContent();
 
             NotifyServicePushFormV2 notifyServicePushFormV2 = new NotifyServicePushFormV2();
             notifyServicePushFormV2.setSuperId(item.getIdmId());
