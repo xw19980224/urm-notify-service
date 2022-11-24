@@ -9,9 +9,34 @@ package com.hh.urm.notify.consts;
  */
 public class DbTableConst {
 
+
+    //Postgres
+
     /**
-     * 用户消息历史表
+     * t_app_template
      */
-    public final static String T_USER_SEND_INFO_HISTORY = "t_user_send_info_history";
+    static class AppTemplate {
+        /**
+         *
+         */
+        public static final String PUSH_TYPE_S = "pushTypes";
+    }
+
+    // MongoDB
+
+    /**
+     * t_user_send_history表
+     */
+    public static class UserSendHistory {
+        /**
+         * 用户消息历史表
+         */
+        public final static String T_USER_SEND_HISTORY = "t_user_send_history";
+
+        /**
+         * name
+         */
+        public static final String NAME = "name";
+    }
 
 }

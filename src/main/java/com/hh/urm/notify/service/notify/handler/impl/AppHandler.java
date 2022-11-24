@@ -4,18 +4,19 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hh.urm.notify.annotation.NotifyService;
 import com.hh.urm.notify.enums.NotifyServiceEnums;
-import com.hh.urm.notify.model.dto.message.AppMessageDTO;
 import com.hh.urm.notify.model.dto.notify.NotifyServicePushFormV2;
 import com.hh.urm.notify.model.entity.AppTemplate;
-import com.hh.urm.notify.model.req.notify.AppReq;
+import com.hh.urm.notify.model.req.notify.NotifyDataReq;
 import com.hh.urm.notify.service.BaseService;
 import com.hh.urm.notify.service.notify.handler.INotifyHandler;
-import com.hh.urm.notify.service.request.IRequest;
+import com.hh.urm.notify.service.request.notify.AppService;
+import com.hh.urm.notify.utils.ObjectCopyUtils;
 import com.hh.urm.notify.utils.StringHelper;
 import com.hh.urm.notify.utils.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.assertj.core.util.Strings;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.util.Pair;
 
 import javax.annotation.Resource;
@@ -39,13 +40,11 @@ import static com.hh.urm.notify.consts.CommonConst.FAILED;
 public class AppHandler extends BaseService implements INotifyHandler {
 
     @Resource
-    private IRequest appService;
+    private AppService appService;
 
     @Override
-    public JSONObject handler(String traceId, String dataStr, String config) {
+    public JSONObject handler(String traceId, List<NotifyDataReq> data, String config) {
         JSONObject result = new JSONObject();
-
-        List<AppMessageDTO> data = JSONArray.parseArray(dataStr, AppMessageDTO.class);
 
         AppTemplate appTemplate = JSONObject.parseObject(config, AppTemplate.class);
 
@@ -65,7 +64,7 @@ public class AppHandler extends BaseService implements INotifyHandler {
         return null;
     }
 
-    public  Pair<Boolean, List<NotifyServicePushFormV2>> builderMessageParams(List<AppMessageDTO> data, AppTemplate appTemplate, JSONObject result) {
+    public Pair<Boolean, List<NotifyServicePushFormV2>> builderMessageParams(List<NotifyDataReq> data, AppTemplate appTemplate, JSONObject result) {
         Integer businessType = appTemplate.getBusinessType();
         if (Objects.isNull(businessType)) {
             getResultMsg(result, "业务类型未必填", FAILED);
@@ -87,18 +86,16 @@ public class AppHandler extends BaseService implements INotifyHandler {
         List<NotifyServicePushFormV2> collect = data.stream().map(item -> {
             String title = appTemplate.getTitle();
             String content = appTemplate.getNotifyContent();
+            JSONObject params = item.getParams();
 
             NotifyServicePushFormV2 notifyServicePushFormV2 = new NotifyServicePushFormV2();
-            notifyServicePushFormV2.setSuperId(item.getIdmId());
+            notifyServicePushFormV2.setSuperId(item.getNotifier());
             notifyServicePushFormV2.setBusinessType(businessType);
             notifyServicePushFormV2.setPushTypes(pushTypes);
             if (!Objects.isNull(jpushType)) {
                 notifyServicePushFormV2.setJpushType(jpushType);
             }
             notifyServicePushFormV2.setActionTime(actionTime);
-            if (!Strings.isNullOrEmpty(item.getVin())) {
-                notifyServicePushFormV2.setVin(item.getVin());
-            }
             if (!Strings.isNullOrEmpty(imageUrl)) {
                 notifyServicePushFormV2.setImageUrl(imageUrl);
             }
@@ -114,25 +111,48 @@ public class AppHandler extends BaseService implements INotifyHandler {
             if (!Strings.isNullOrEmpty(popWindowExt)) {
                 notifyServicePushFormV2.setPopWindowExt(popWindowExt);
             }
-            if (!Objects.isNull(item.getTitleParams()) && !item.getTitleParams().isEmpty()) {
-                List<String> titleParams = item.getTitleParams();
-                title = StringHelper.paramsFill(title, titleParams);
+            if (!Objects.isNull(params)) {
+                JSONArray titleParamsJsonArray = params.getJSONArray("titleParams");
                 notifyServicePushFormV2.setTitle(title);
-            } else {
-                notifyServicePushFormV2.setTitle(title);
+
+                if (!Objects.isNull(titleParamsJsonArray)) {
+                    List<String> titleParams = titleParamsJsonArray.toJavaList(String.class);
+                    if (!Objects.isNull(titleParams) && !titleParams.isEmpty()) {
+                        title = StringHelper.paramsFill(title, titleParams);
+                        notifyServicePushFormV2.setTitle(title);
+                    }
+                }
+                JSONArray contentParamsJsonArray = params.getJSONArray("contentParams");
+                notifyServicePushFormV2.setContent(content);
+
+                if (!Objects.isNull(contentParamsJsonArray)) {
+                    List<String> contentParams = contentParamsJsonArray.toJavaList(String.class);
+                    if (!Objects.isNull(contentParams) && !contentParams.isEmpty()) {
+                        content = StringHelper.paramsFill(content, contentParams);
+                        notifyServicePushFormV2.setContent(content);
+                    }
+                }
             }
-            if (!Objects.isNull(item.getContentParams()) && !item.getContentParams().isEmpty()) {
-                List<String> contentParams = item.getContentParams();
-                content = StringHelper.paramsFill(content, contentParams);
-                notifyServicePushFormV2.setContent(content);
-            } else {
-                notifyServicePushFormV2.setContent(content);
+
+            JSONObject replace = item.getReplace();
+            if (!Objects.isNull(replace)) {
+                templateReplace(replace, notifyServicePushFormV2);
             }
 
             return notifyServicePushFormV2;
         }).collect(Collectors.toList());
 
-
         return Pair.of(true, collect);
+    }
+
+    /**
+     * 模板信息替换
+     *
+     * @param replace 拓展字段
+     * @param target 通知服务
+     */
+    private static void templateReplace(JSONObject replace, NotifyServicePushFormV2 target) {
+        NotifyServicePushFormV2 source = replace.toJavaObject(NotifyServicePushFormV2.class);
+        BeanUtils.copyProperties(source, target, ObjectCopyUtils.getNullProps(source));
     }
 }

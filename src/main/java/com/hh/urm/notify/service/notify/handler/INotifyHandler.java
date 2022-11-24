@@ -1,6 +1,9 @@
 package com.hh.urm.notify.service.notify.handler;
 
 import com.alibaba.fastjson.JSONObject;
+import com.hh.urm.notify.model.req.notify.NotifyDataReq;
+
+import java.util.List;
 
 /**
  * @ClassName: IMessage
@@ -13,10 +16,10 @@ public interface INotifyHandler {
 
     /**
      * @param traceId 链路Id
-     * @param dataStr 通知内容
+     * @param data 通知内容
      * @param config  通知配置
      * @return 处理结果
      */
-    JSONObject handler(String traceId, String dataStr, String config);
+    JSONObject handler(String traceId, List<NotifyDataReq> data, String config);
 
 }

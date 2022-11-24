@@ -50,6 +50,10 @@ public class CommonConst {
 
     public final static String TYPE = "type";
 
+    public static final String PARAMS = "params";
+    public static final String REQUEST = "request";
+    public static final String RESPONSE = "response";
+
     private CommonConst() {
 
     }

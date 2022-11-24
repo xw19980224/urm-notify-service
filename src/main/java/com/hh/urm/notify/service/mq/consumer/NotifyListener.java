@@ -2,6 +2,7 @@ package com.hh.urm.notify.service.mq.consumer;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.hh.urm.notify.model.req.notify.NotifyDataReq;
 import com.hh.urm.notify.service.notify.handler.INotifyHandler;
 import com.hh.urm.notify.service.notify.handler.MessageHandOutFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +34,7 @@ public class NotifyListener {
     @Resource
     private MessageHandOutFactory messageHandOutFactory;
 
-//    @KafkaListener(id = "notify_topic", topics = "#{'${spring.kafka.urm_topics.notify_topic}'.split(',')}")
+    @KafkaListener(id = "notify_topic", topics = "#{'${spring.kafka.urm_topics.notify_topic}'.split(',')}")
     public void consumer(ConsumerRecord<?, ?> record, Acknowledgment ack, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
         Optional<?> message = Optional.ofNullable(record.value());
@@ -52,7 +53,7 @@ public class NotifyListener {
             String type = ((String) jsonObject.getOrDefault(TYPE, ""));
             String config = (String) jsonObject.getOrDefault(CONFIG, "");
 
-            String dataStr = (String) jsonObject.getOrDefault(DATA, "");
+            List<NotifyDataReq> data = jsonObject.getJSONArray(DATA).toJavaList(NotifyDataReq.class);
 
             // 3、获取处理器并执行
             INotifyHandler notifyHandler = messageHandOutFactory.getNotifyHandler(type);
@@ -60,9 +61,7 @@ public class NotifyListener {
                 log.error("traceId:{},topic:{},kafka consumer breakOff, result:{}", traceId, topic, "暂无消息处理器");
                 return;
             }
-            notifyHandler.handler(traceId, dataStr, config);
-
-
+            notifyHandler.handler(traceId, data, config);
         } catch (Exception e) {
             log.error("消费MQ消息，失败 topic：{} message：{}", topic, message.get());
             throw e;

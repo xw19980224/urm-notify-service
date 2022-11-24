@@ -16,10 +16,6 @@ import java.util.stream.Collectors;
  */
 public enum NotifyServiceEnums {
     /**
-     * 全部
-     */
-    ALL("0", "all", "all", ""),
-    /**
      * 短信
      */
     SMS("1", "sms", "smsService", "urm_sms_notify_topic"),
@@ -82,9 +78,6 @@ public enum NotifyServiceEnums {
     }
 
     public String getTopicName() {
-        if (Strings.isNullOrEmpty(topicName)) {
-            return getAllTopic();
-        }
         return topicName;
     }
 
@@ -107,36 +100,11 @@ public enum NotifyServiceEnums {
     /**
      * 检查code数组中，是否包含未知值
      *
-     * @param codes
+     * @param code
      * @return 是否包含未知值
      */
-    public static Boolean checkCodeIsExist(List<String> codes) {
-        boolean exist = true;
-        for (String code : codes) {
-            if (getServiceNameByCode(code) == null) {
-                exist = false;
-            }
-        }
-        return exist;
-    }
-
-    /**
-     * 获取所有通知主题
-     *
-     * @return 通知主题
-     */
-    private String getAllTopic() {
-        List<String> topicList = Lists.newArrayList();
-
-        NotifyServiceEnums[] notifyServiceEnums = values();
-        for (NotifyServiceEnums notifyServiceEnum : notifyServiceEnums) {
-            String code = notifyServiceEnum.getCode();
-            if (ALL.getCode().equals(code)) {
-                continue;
-            }
-            topicList.add(notifyServiceEnum.getTopicName());
-        }
-        return String.join(",", topicList);
+    public static Boolean checkCodeIsExist(String code) {
+        return getServiceNameByCode(code) != null;
     }
 
     /**
@@ -179,14 +147,5 @@ public enum NotifyServiceEnums {
             }
         }
         return null;
-    }
-
-    /**
-     * 获取所有通知类型
-     *
-     * @return
-     */
-    public static List<String> getAllCode() {
-        return Arrays.stream(values()).map(NotifyServiceEnums::getCode).filter(itemCode -> !itemCode.equals(ALL.getCode())).collect(Collectors.toList());
     }
 }

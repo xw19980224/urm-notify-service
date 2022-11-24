@@ -34,19 +34,14 @@ public class NotifyReq implements Serializable {
      */
     @NotEmpty(message = "通知类型必填")
     @ApiModelProperty(value = "通知类型：1、短信 2、邮箱 3、APP 4、飞书 5、企微 6、其他")
-    private List<String> notifyType;
+    private String notifyType;
 
     /**
-     * 短信模板code据code
+     * 模板code
      */
-    @ApiModelProperty(value = "短信源数据code，当notifyType为0或1时，必填")
-    private String smsCode;
-
-    /**
-     * oneApp模板code
-     */
-    @ApiModelProperty(value = "oneApp模板code，当notifyType为0或3时，必填")
-    private String appCode;
+    @NotBlank(message = "模板code")
+    @ApiModelProperty(value = "模板code，必填")
+    private String templateCode;
 
     @ApiModelProperty(value = "通知参数")
     private List<NotifyDataReq> data;
@@ -70,28 +65,20 @@ public class NotifyReq implements Serializable {
         this.sign = sign;
     }
 
-    public List<String> getNotifyType() {
+    public String getNotifyType() {
         return notifyType;
     }
 
-    public void setNotifyType(List<String> notifyType) {
+    public void setNotifyType(String notifyType) {
         this.notifyType = notifyType;
     }
 
-    public String getSmsCode() {
-        return smsCode;
+    public String getTemplateCode() {
+        return templateCode;
     }
 
-    public void setSmsCode(String smsCode) {
-        this.smsCode = smsCode;
-    }
-
-    public String getAppCode() {
-        return appCode;
-    }
-
-    public void setAppCode(String appCode) {
-        this.appCode = appCode;
+    public void setTemplateCode(String templateCode) {
+        this.templateCode = templateCode;
     }
 
     public List<NotifyDataReq> getData() {

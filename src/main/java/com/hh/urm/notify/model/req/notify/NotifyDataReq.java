@@ -1,6 +1,15 @@
 package com.hh.urm.notify.model.req.notify;
 
 
+import com.alibaba.fastjson.JSONObject;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotEmpty;
+
 /**
  * @ClassName: NotifyDataDTO
  * @Author: MaxWell
@@ -8,45 +17,24 @@ package com.hh.urm.notify.model.req.notify;
  * @Date: 2022/11/4 14:38
  * @Version: 1.0
  */
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class NotifyDataReq {
 
+    @NotEmpty
+    @ApiModelProperty(value = "superId")
     private String superId;
 
-    private SmsReq sms;
+    @NotEmpty
+    @ApiModelProperty(value = "通知人")
+    private String notifier;
 
-    private AppReq app;
+    @ApiModelProperty(value = "通知参数")
+    private JSONObject params;
 
-    private MailReq mail;
+    @ApiModelProperty(value = "拓展字段")
+    private JSONObject replace;
 
-    public String getSuperId() {
-        return superId;
-    }
-
-    public void setSuperId(String superId) {
-        this.superId = superId;
-    }
-
-    public SmsReq getSms() {
-        return sms;
-    }
-
-    public void setSms(SmsReq sms) {
-        this.sms = sms;
-    }
-
-    public AppReq getApp() {
-        return app;
-    }
-
-    public void setApp(AppReq app) {
-        this.app = app;
-    }
-
-    public MailReq getMail() {
-        return mail;
-    }
-
-    public void setMail(MailReq mail) {
-        this.mail = mail;
-    }
 }

@@ -6,8 +6,6 @@ import com.hh.urm.notify.enums.NotifyServiceEnums;
 import com.hh.urm.notify.model.bo.NotifyBo;
 import com.hh.urm.notify.model.req.notify.NotifyDataReq;
 import com.hh.urm.notify.service.notify.INotifyService;
-import com.hh.urm.notify.service.notify.NotifyServiceSupport;
-import com.hh.urm.notify.service.notify.convert.IConvertHandler;
 import com.hh.urm.notify.utils.TimeUtil;
 import com.hh.urm.notify.utils.base.ServiceResponse;
 import com.mongodb.BasicDBObject;
@@ -24,12 +22,13 @@ import org.springframework.util.concurrent.ListenableFutureCallback;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.hh.opengateway.constant.Constant.SIGN;
 import static com.hh.urm.notify.consts.CommonConst.*;
-import static com.hh.urm.notify.consts.DbTableConst.T_USER_SEND_INFO_HISTORY;
+import static com.hh.urm.notify.consts.DbTableConst.UserSendHistory.NAME;
+import static com.hh.urm.notify.consts.DbTableConst.UserSendHistory.T_USER_SEND_HISTORY;
+
 
 /**
  * @ClassName: NotifyServiceImpl
@@ -40,7 +39,7 @@ import static com.hh.urm.notify.consts.DbTableConst.T_USER_SEND_INFO_HISTORY;
  */
 @Slf4j
 @Service
-public class NotifyServiceImpl extends NotifyServiceSupport implements INotifyService {
+public class NotifyServiceImpl implements INotifyService {
 
     @Resource
     private KafkaTemplate<String, Object> kafkaTemplate;
@@ -56,41 +55,36 @@ public class NotifyServiceImpl extends NotifyServiceSupport implements INotifySe
 
         List<NotifyDataReq> data = notifyBo.getData();
 
-        List<String> notifyType = notifyBo.getNotifyType();
+        String notifyType = notifyBo.getNotifyType();
 
-        List<String> topicList = NotifyServiceEnums.getTopicList(notifyType);
+        String topic = NotifyServiceEnums.getTopicNameByCode(notifyType);
 
-        // 2、更具不同topic发送消息
-        for (String topic : topicList) {
-            // 获取通知类型
-            String code = NotifyServiceEnums.getCodeByTopicName(topic);
-            // 构建消息通知参数
-            JSONObject jsonObject = buildKafkaParamsByTopic(code, notifyBo, data);
-            // 发送MQ
-            ListenableFuture<SendResult<String, Object>> future = kafkaTemplate.send(topic, jsonObject.toJSONString());
-            future.addCallback(new ListenableFutureCallback<SendResult<String, Object>>() {
-                @Override
-                public void onFailure(Throwable throwable) {
-                    log.info(topic + " - 生产者 发送消息失败：" + throwable.getMessage());
-                    recordHistory(
-                            traceId,
-                            code,
-                            NotifyConst.KafkaStateEnums.EXCEPTION.getCode(),
-                            notifyBo, throwable.getMessage());
-                }
+        // 构建消息通知参数
+        JSONObject jsonObject = buildKafkaParamsByTopic(notifyType, notifyBo, data);
+        // 发送MQ
+        ListenableFuture<SendResult<String, Object>> future = kafkaTemplate.send(topic, jsonObject.toJSONString());
+        future.addCallback(new ListenableFutureCallback<SendResult<String, Object>>() {
+            @Override
+            public void onFailure(Throwable throwable) {
+                log.info(topic + " - 生产者 发送消息失败：" + throwable.getMessage());
+                recordHistory(
+                        traceId,
+                        notifyType,
+                        NotifyConst.KafkaStateEnums.EXCEPTION.getCode(),
+                        notifyBo, throwable.getMessage());
+            }
 
-                @Override
-                public void onSuccess(SendResult<String, Object> stringObjectSendResult) {
-                    // 记录成功历史
-                    recordHistory(
-                            traceId,
-                            code,
-                            NotifyConst.KafkaStateEnums.READY.getCode(),
-                            notifyBo, null);
-                    log.info(topic + " - 生产者 发送消息成功：" + stringObjectSendResult.toString());
-                }
-            });
-        }
+            @Override
+            public void onSuccess(SendResult<String, Object> stringObjectSendResult) {
+                // 记录成功历史
+                recordHistory(
+                        traceId,
+                        notifyType,
+                        NotifyConst.KafkaStateEnums.READY.getCode(),
+                        notifyBo, null);
+                log.info(topic + " - 生产者 发送消息成功：" + stringObjectSendResult.toString());
+            }
+        });
 
         return ServiceResponse.createSuccessResponse(traceId, result);
     }
@@ -106,32 +100,24 @@ public class NotifyServiceImpl extends NotifyServiceSupport implements INotifySe
     private JSONObject buildKafkaParamsByTopic(String code, NotifyBo notifyBo, List<NotifyDataReq> data) {
         JSONObject jsonObject = new JSONObject();
 
-        // 获取指定类型的配置和数据
-        IConvertHandler iConvertHandler = convertHandlerMaps.get(code);
-        Pair<String, String> convert = iConvertHandler.convert(notifyBo, data);
-
         jsonObject.put(TRACE_ID, notifyBo.getTraceId());
         jsonObject.put(TYPE, code);
-        jsonObject.put(CONFIG, convert.getFirst());
-        jsonObject.put(DATA, convert.getSecond());
+        jsonObject.put(CONFIG, notifyBo.getTemplate().toJSONString());
+        jsonObject.put(DATA, data);
         return jsonObject;
     }
 
     /**
      * 通过topic，获取模板Code和Name
      *
-     * @param code     通知类型
      * @param notifyBo 通知业务数据
      * @return Pair 1、模板code 2、模板名称
      */
-    private Pair<String, String> getTemplateCodeAndName(String code, NotifyBo notifyBo) {
-        if (NotifyServiceEnums.SMS.getCode().equals(code)) {
-            return Pair.of(notifyBo.getSmsTemplate().getCode(), notifyBo.getSmsTemplate().getName());
-        }
-        if (NotifyServiceEnums.ONE_APP.getCode().equals(code)) {
-            return Pair.of(notifyBo.getAppTemplate().getCode(), notifyBo.getAppTemplate().getTitle());
-        }
-        return Pair.of("", "");
+    private Pair<String, String> getTemplateCodeAndName(NotifyBo notifyBo) {
+        JSONObject template = notifyBo.getTemplate();
+        String code = (String) template.getOrDefault(CODE, "");
+        String name = (String) template.getOrDefault(NAME, "");
+        return Pair.of(code, name);
     }
 
     /**
@@ -157,12 +143,12 @@ public class NotifyServiceImpl extends NotifyServiceSupport implements INotifySe
             dataInfo.put(EXCEPTION, msg);
         }
         // 获取模板名称，模板code
-        Pair<String, String> template = getTemplateCodeAndName(type, notifyBo);
+        Pair<String, String> template = getTemplateCodeAndName(notifyBo);
         dataInfo.put(NotifyConst.Sms.TEMPLATE_CODE, template.getFirst());
         dataInfo.put(NotifyConst.Sms.TEMPLATE_NAME, template.getSecond());
         List<BasicDBObject> data = objectToJsonObject(type, dataInfo, notifyBo);
 
-        mongoTemplate.insert(data, T_USER_SEND_INFO_HISTORY);
+        mongoTemplate.insert(data, T_USER_SEND_HISTORY);
     }
 
     /**
@@ -178,18 +164,14 @@ public class NotifyServiceImpl extends NotifyServiceSupport implements INotifySe
             BasicDBObject jsonObject = new BasicDBObject();
             jsonObject.putAll(dataInfo);
             jsonObject.put(SUPER_ID, notifyData.getSuperId());
-
-            if (!Objects.isNull(notifyData.getSms()) && Objects.equals(type, NotifyServiceEnums.SMS.getCode())) {
-                jsonObject.put(NotifyServiceEnums.SMS.getName(), JSONObject.parseObject(JSONObject.toJSONString(notifyData.getSms())));
+            if (type.equals(NotifyServiceEnums.ONE_APP.getCode())) {
+                JSONObject template = notifyBo.getTemplate();
+                String pushTypes = (String) template.getOrDefault("pushTypes", "");
+                jsonObject.put("d_status", pushTypes);
             }
-
-            if (!Objects.isNull(notifyData.getMail()) && Objects.equals(type, NotifyServiceEnums.MAIL.getCode())) {
-                jsonObject.put(NotifyServiceEnums.MAIL.getName(), JSONObject.parseObject(JSONObject.toJSONString(notifyData.getMail())));
-
-            }
-            if (!Objects.isNull(notifyData.getApp()) && Objects.equals(type, NotifyServiceEnums.ONE_APP.getCode())) {
-                jsonObject.put(NotifyServiceEnums.ONE_APP.getName(), JSONObject.parseObject(JSONObject.toJSONString(notifyData.getApp())));
-            }
+            JSONObject params = JSONObject.parseObject(JSONObject.toJSONString(notifyData));
+            params.remove(SUPER_ID);
+            jsonObject.put(PARAMS,params);
             return jsonObject;
         }).collect(Collectors.toList());
 

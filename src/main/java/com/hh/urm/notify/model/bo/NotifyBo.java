@@ -1,8 +1,7 @@
 package com.hh.urm.notify.model.bo;
 
-import com.hh.urm.notify.model.entity.AppTemplate;
+import com.alibaba.fastjson.JSONObject;
 import com.hh.urm.notify.model.req.notify.NotifyDataReq;
-import com.hh.urm.notify.model.entity.SmsTemplate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -36,17 +35,12 @@ public class NotifyBo {
     /**
      * 通知类型：{@link com.hh.urm.notify.enums.NotifyServiceEnums}通知类型：0、All 1、短信 2、邮箱 3、APP 4、飞书 5、企微 6、其他
      */
-    private List<String> notifyType;
+    private String notifyType;
 
     /**
-     * 短信模板对象
+     * 模板对象
      */
-    private SmsTemplate smsTemplate;
-
-    /**
-     * 站内信模板
-     */
-    private AppTemplate appTemplate;
+    private JSONObject template;
 
     /**
      * 通知内容

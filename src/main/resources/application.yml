@@ -50,7 +50,8 @@ notify:
   sms:
     host: https://rtcsms.cn-north-1.myhuaweicloud.com:10743
     url:
-      batchUrl: /sms/batchSendDiffSms/v1
+      batchSendSms: /sms/batchSendSms/v1
+      batchSendDiffSms: /sms/batchSendDiffSms/v1
   app:
     host: http://119.3.90.36:31469
     ak: 7f92ba784eee11eaa84e10e7c63338a5

@@ -49,7 +49,7 @@ public class NotifyController {
         String traceId = notifyReq.getTraceId();
 
         // 1、校验通知类型
-        List<String> notifyType = notifyReq.getNotifyType();
+        String notifyType = notifyReq.getNotifyType();
         Boolean exist = NotifyServiceEnums.checkCodeIsExist(notifyType);
         if (!exist) {
             ServiceResponse.createFailResponse(traceId, NotifyConst.NOTIFY_TYPE_NOT_IN_RULES);
@@ -68,22 +68,11 @@ public class NotifyController {
         NotifyBo notifyBo = new NotifyBo();
         BeanUtils.copyProperties(notifyReq, notifyBo);
 
-        boolean containsAll = notifyType.contains(NotifyServiceEnums.ALL.getCode());
-        // 是否通知全部
-        if (containsAll) {
-            notifyType = NotifyServiceEnums.getAllCode();
-            notifyBo.setNotifyType(notifyType);
-        }
-        for (String type : notifyType) {
-            ICheck checkService = notifyParamsCheckFactory.getCheckService(type);
-            if (Objects.isNull(checkService)) {
-                continue;
-            }
-            checkService.check(notifyReq, notifyBo, result);
+        ICheck checkService = notifyParamsCheckFactory.getCheckService(notifyType);
+        checkService.check(notifyReq.getTemplateCode(), notifyBo, result);
 
-            if (!result.isEmpty()) {
-                return ServiceResponse.createFailResponse(notifyBo.getTraceId(), NotifyResultEnums.VERIFY_FAILED, result);
-            }
+        if (!result.isEmpty()) {
+            return ServiceResponse.createFailResponse(notifyBo.getTraceId(), NotifyResultEnums.VERIFY_FAILED, result);
         }
 
         return notifyService.notify(notifyBo);

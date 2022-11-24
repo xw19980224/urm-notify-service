@@ -1,12 +1,10 @@
-package com.hh.urm.notify.service.request.impl;
+package com.hh.urm.notify.service.request.notify;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.collect.Maps;
 import com.hh.opengateway.constant.Constant;
 import com.hh.opengateway.utils.CheckSignUtil;
 import com.hh.urm.notify.service.BaseService;
-import com.hh.urm.notify.service.request.IRequest;
 import com.hh.urm.notify.utils.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -16,8 +14,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
 
 import static com.hh.urm.notify.consts.CommonConst.*;
 
@@ -30,7 +26,7 @@ import static com.hh.urm.notify.consts.CommonConst.*;
  */
 @Slf4j
 @Service
-public class AppService extends BaseService implements IRequest {
+public class AppService extends BaseService {
 
     @Value("${notify.app.host}")
     private String host;
@@ -41,7 +37,6 @@ public class AppService extends BaseService implements IRequest {
     @Value("${notify.app.url.pushPath}")
     private String pushPathUrl;
 
-    @Override
     public <T> JSONObject execute(T params) throws Exception {
         JSONObject result = new JSONObject();
 
