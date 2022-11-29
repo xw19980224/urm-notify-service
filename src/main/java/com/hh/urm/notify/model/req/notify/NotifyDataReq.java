@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 /**
  * @ClassName: NotifyDataDTO
@@ -31,8 +32,12 @@ public class NotifyDataReq {
     @ApiModelProperty(value = "通知人")
     private String notifier;
 
+    @NotEmpty
+    @ApiModelProperty(value = "请求Id")
+    private String requestId;
+
     @ApiModelProperty(value = "通知参数")
-    private JSONObject params;
+    private String params;
 
     @ApiModelProperty(value = "拓展字段")
     private JSONObject replace;

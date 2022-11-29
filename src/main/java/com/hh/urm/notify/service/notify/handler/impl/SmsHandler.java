@@ -116,11 +116,10 @@ public class SmsHandler extends BaseService implements INotifyHandler {
                 smsContentDTO.setSignature(signature);
             }
 
-            JSONObject params = item.getParams();
-            if (!Objects.isNull(params)) {
-                String contentParamsStr = ((String) params.getOrDefault("contentParams", ""));
-                if (!Strings.isNullOrEmpty(contentParamsStr)) {
-                    smsContentDTO.setTemplateParas(Arrays.stream(contentParamsStr.split(",")).toArray(String[]::new));
+            String paramsStr = item.getParams();
+            if (!Strings.isNullOrEmpty(paramsStr)) {
+                if (!Strings.isNullOrEmpty(paramsStr)) {
+                    smsContentDTO.setTemplateParas(Arrays.stream(paramsStr.split(",")).toArray(String[]::new));
                 }
             }
             return smsContentDTO;

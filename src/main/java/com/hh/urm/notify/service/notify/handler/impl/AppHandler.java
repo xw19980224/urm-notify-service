@@ -1,6 +1,5 @@
 package com.hh.urm.notify.service.notify.handler.impl;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hh.urm.notify.annotation.NotifyService;
 import com.hh.urm.notify.enums.NotifyServiceEnums;
@@ -26,7 +25,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.hh.urm.notify.consts.CommonConst.FAILED;
+import static com.hh.urm.notify.consts.CommonConst.*;
 
 /**
  * @ClassName: AppHandler
@@ -54,11 +53,16 @@ public class AppHandler extends BaseService implements INotifyHandler {
             return result;
         }
         for (NotifyServicePushFormV2 notifyServicePushFormV2 : booleanListPair.getSecond()) {
+            JSONObject send = null;
             try {
-                JSONObject send = appService.execute(notifyServicePushFormV2);
+                send = appService.execute(notifyServicePushFormV2);
             } catch (Exception e) {
                 log.warn("app request Exception, request:{},Exception message:{}", JSONObject.toJSONString(notifyServicePushFormV2), e.getMessage());
+                send = new JSONObject();
+                send.put(MSG, e.getMessage());
+                send.put(STATUS, EXCEPTION);
             }
+            System.out.println(send.toJSONString());
         }
 
         return null;
@@ -86,7 +90,7 @@ public class AppHandler extends BaseService implements INotifyHandler {
         List<NotifyServicePushFormV2> collect = data.stream().map(item -> {
             String title = appTemplate.getTitle();
             String content = appTemplate.getNotifyContent();
-            JSONObject params = item.getParams();
+            String paramsStr = item.getParams();
 
             NotifyServicePushFormV2 notifyServicePushFormV2 = new NotifyServicePushFormV2();
             notifyServicePushFormV2.setSuperId(item.getNotifier());
@@ -111,26 +115,13 @@ public class AppHandler extends BaseService implements INotifyHandler {
             if (!Strings.isNullOrEmpty(popWindowExt)) {
                 notifyServicePushFormV2.setPopWindowExt(popWindowExt);
             }
-            if (!Objects.isNull(params)) {
-                JSONArray titleParamsJsonArray = params.getJSONArray("titleParams");
-                notifyServicePushFormV2.setTitle(title);
+            notifyServicePushFormV2.setTitle(title);
 
-                if (!Objects.isNull(titleParamsJsonArray)) {
-                    List<String> titleParams = titleParamsJsonArray.toJavaList(String.class);
-                    if (!Objects.isNull(titleParams) && !titleParams.isEmpty()) {
-                        title = StringHelper.paramsFill(title, titleParams);
-                        notifyServicePushFormV2.setTitle(title);
-                    }
-                }
-                JSONArray contentParamsJsonArray = params.getJSONArray("contentParams");
-                notifyServicePushFormV2.setContent(content);
-
-                if (!Objects.isNull(contentParamsJsonArray)) {
-                    List<String> contentParams = contentParamsJsonArray.toJavaList(String.class);
-                    if (!Objects.isNull(contentParams) && !contentParams.isEmpty()) {
-                        content = StringHelper.paramsFill(content, contentParams);
-                        notifyServicePushFormV2.setContent(content);
-                    }
+            if (!Strings.isNullOrEmpty(paramsStr)) {
+                List<String> contentParams = Lists.newArrayList(paramsStr.split(","));
+                if (!Objects.isNull(contentParams) && !contentParams.isEmpty()) {
+                    content = StringHelper.paramsFill(content, contentParams);
+                    notifyServicePushFormV2.setContent(content);
                 }
             }
 
@@ -149,7 +140,7 @@ public class AppHandler extends BaseService implements INotifyHandler {
      * 模板信息替换
      *
      * @param replace 拓展字段
-     * @param target 通知服务
+     * @param target  通知服务
      */
     private static void templateReplace(JSONObject replace, NotifyServicePushFormV2 target) {
         NotifyServicePushFormV2 source = replace.toJavaObject(NotifyServicePushFormV2.class);

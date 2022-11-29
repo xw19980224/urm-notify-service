@@ -49,20 +49,28 @@ public class RestTemplateConfig {
         httpClientBuilder.setSSLContext(sslContext);
         HostnameVerifier hostnameVerifier = NoopHostnameVerifier.INSTANCE;
         SSLConnectionSocketFactory sslConnectionSocketFactory = new SSLConnectionSocketFactory(sslContext, hostnameVerifier);
+        // 注册http和https请求
         Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
                 .register("http", PlainConnectionSocketFactory.getSocketFactory())
-                .register("https", sslConnectionSocketFactory).build();// 注册http和https请求
+                .register("https", sslConnectionSocketFactory).build();
         // 开始设置连接池
         PoolingHttpClientConnectionManager poolingHttpClientConnectionManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
-        poolingHttpClientConnectionManager.setMaxTotal(500); // 最大连接数500
-        poolingHttpClientConnectionManager.setDefaultMaxPerRoute(100); // 同路由并发数100
+        // 最大连接数500
+        poolingHttpClientConnectionManager.setMaxTotal(500);
+        // 同路由并发数100
+        poolingHttpClientConnectionManager.setDefaultMaxPerRoute(100);
         httpClientBuilder.setConnectionManager(poolingHttpClientConnectionManager);
-        httpClientBuilder.setRetryHandler(new DefaultHttpRequestRetryHandler(3, true)); // 重试次数
+        // 重试次数
+        httpClientBuilder.setRetryHandler(new DefaultHttpRequestRetryHandler(3, true));
         HttpClient httpClient = httpClientBuilder.build();
-        HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(httpClient); // httpClient连接配置
-        clientHttpRequestFactory.setConnectTimeout(20000);              // 连接超时
-        clientHttpRequestFactory.setReadTimeout(30000);                 // 数据读取超时时间
-        clientHttpRequestFactory.setConnectionRequestTimeout(20000);    // 连接不够用的等待时间
+        // httpClient连接配置
+        HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
+        // 连接超时
+        clientHttpRequestFactory.setConnectTimeout(20000);
+        // 数据读取超时时间
+        clientHttpRequestFactory.setReadTimeout(30000);
+        // 连接不够用的等待时间
+        clientHttpRequestFactory.setConnectionRequestTimeout(20000);
         return clientHttpRequestFactory;
     }
 }
