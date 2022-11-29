@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.hh.opengateway.constant.Constant;
 import com.hh.opengateway.utils.CheckSignUtil;
+import com.hh.urm.notify.model.dto.notify.NotifyServicePushFormV2;
 import com.hh.urm.notify.service.BaseService;
 import com.hh.urm.notify.utils.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +38,7 @@ public class AppService extends BaseService {
     @Value("${notify.app.url.pushPath}")
     private String pushPathUrl;
 
-    public <T> JSONObject execute(T params) throws Exception {
+    public JSONObject execute(NotifyServicePushFormV2 params) throws Exception {
         JSONObject result = new JSONObject();
 
         long currentTimeMillis = System.currentTimeMillis();

@@ -6,7 +6,7 @@ spring:
     name: urm-notify-service
   data:
     mongodb:
-      uri: mongodb://urm-1:p3aw09X_4Wh5HjT1EH@10.131.137.96:8635/urm-1?authSource=urm-1&authMechanism=SCRAM-SHA-256&replicaSet=replica
+      uri: mongodb://urm-ops:Tp_0INPtFtzvuT6t@10.129.5.82:8635,10.129.5.15:8635,10.129.5.62:8635/urm?authSource=urm&authMechanism=SCRAM-SHA-1&replicaSet=replica
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://101.35.221.49:5432/notify

@@ -9,6 +9,7 @@ import com.hh.urm.notify.model.dto.notify.SmsDTO;
 import com.hh.urm.notify.model.entity.SmsTemplate;
 import com.hh.urm.notify.repository.SmsTemplateRepository;
 import com.hh.urm.notify.service.request.notify.SmsService;
+import com.hh.urm.notify.utils.TimeUtil;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +20,7 @@ import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -116,5 +118,13 @@ public class SmsSendTest {
         String bodyStr = JSONObject.toJSONString(smsDTO);
         String response = smsService.batchSendDiffSms(bodyStr);
         System.out.println(response);
+    }
+    
+    @Test
+    public void ddd(){
+        String str = "2021-09-14 16:50:42";
+        str = str.replace(" "," ");
+        Date date = TimeUtil.parseDate(str, TimeUtil.YYYY_MM_DD_HH_MM_SS);
+        System.out.println(date);
     }
 }
