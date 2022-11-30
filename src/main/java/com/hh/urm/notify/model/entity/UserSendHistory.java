@@ -20,7 +20,7 @@ public class UserSendHistory {
     @Column(name = "request_id", nullable = false, length = 25)
     private String requestId;
 
-    @Column(name = "super_id", nullable = false, length = 25)
+    @Column(name = "superId", nullable = false, length = 25)
     private String superId;
 
     @Column(name = "sign", length = 25)
