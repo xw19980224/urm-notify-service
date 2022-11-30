@@ -7,11 +7,17 @@ import com.hh.urm.notify.enums.NotifyServiceEnums;
 import com.hh.urm.notify.model.bo.NotifyBo;
 import com.hh.urm.notify.model.entity.AppTemplate;
 import com.hh.urm.notify.repository.AppTemplateRepository;
+import com.hh.urm.notify.service.notify.check.factory.BaseCheck;
 import com.hh.urm.notify.service.notify.check.factory.ICheck;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+
+import static com.hh.urm.notify.consts.CommonConst.SUPER_ID;
+import static com.hh.urm.notify.consts.NotifyConst.*;
 
 /**
  * @ClassName: AppCheck
@@ -21,7 +27,7 @@ import java.util.Objects;
  * @Version: 1.0
  */
 @Component
-public class AppCheck implements ICheck {
+public class AppCheck extends BaseCheck implements ICheck {
 
     @Resource
     private AppTemplateRepository appTemplateRepository;
@@ -34,9 +40,10 @@ public class AppCheck implements ICheck {
         }
         AppTemplate appTemplate = appTemplateRepository.findOneByCode(code).orElse(null);
         if (Objects.isNull(appTemplate)) {
-            result.put("appCode", "oneApp模板不存在");
+            result.put(APP_CODE, "oneApp模板不存在");
         } else {
             notifyBo.setTemplate(JSONObject.parseObject(JSONObject.toJSONString(appTemplate)));
         }
+        checkDataList(notifyBo, result);
     }
 }

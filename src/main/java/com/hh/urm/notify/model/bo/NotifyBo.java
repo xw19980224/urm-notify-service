@@ -33,7 +33,7 @@ public class NotifyBo {
     private String sign;
 
     /**
-     * 通知类型：{@link com.hh.urm.notify.enums.NotifyServiceEnums}通知类型：0、All 1、短信 2、邮箱 3、APP 4、飞书 5、企微 6、其他
+     * 通知类型：{@link com.hh.urm.notify.enums.NotifyServiceEnums}通知类型： 1、短信 2、邮箱 3、APP 4、飞书 5、企微 6、其他
      */
     private String notifyType;
 

@@ -27,8 +27,8 @@ public class NotifyDataReq {
     @ApiModelProperty(value = "superId")
     private String superId;
 
-    @ApiModelProperty(value = "通知人")
-    private String notifier;
+    @ApiModelProperty(value = "接收人")
+    private String receiver;
 
     @ApiModelProperty(value = "请求Id")
     private String requestId;
@@ -37,6 +37,6 @@ public class NotifyDataReq {
     private String params;
 
     @ApiModelProperty(value = "拓展字段")
-    private JSONObject replace;
+    private JSONObject extend;
 
 }

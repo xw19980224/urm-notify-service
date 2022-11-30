@@ -6,12 +6,15 @@ import com.hh.urm.notify.enums.NotifyServiceEnums;
 import com.hh.urm.notify.model.bo.NotifyBo;
 import com.hh.urm.notify.model.entity.SmsTemplate;
 import com.hh.urm.notify.repository.SmsTemplateRepository;
+import com.hh.urm.notify.service.notify.check.factory.BaseCheck;
 import com.hh.urm.notify.service.notify.check.factory.ICheck;
 import org.assertj.core.util.Strings;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.Objects;
+
+import static com.hh.urm.notify.consts.NotifyConst.SMS_CODE;
 
 /**
  * @ClassName: SmsCheck
@@ -21,7 +24,7 @@ import java.util.Objects;
  * @Version: 1.0
  */
 @Component
-public class SmsCheck implements ICheck {
+public class SmsCheck extends BaseCheck implements ICheck {
 
     @Resource
     private SmsTemplateRepository smsTemplateRepository;
@@ -34,9 +37,10 @@ public class SmsCheck implements ICheck {
         }
         SmsTemplate smsTemplate = smsTemplateRepository.findOneByCode(code).orElse(null);
         if (Objects.isNull(smsTemplate)) {
-            result.put("smsCode", "短信模板不存在");
+            result.put(SMS_CODE, "短信模板不存在");
         } else {
             notifyBo.setTemplate(JSONObject.parseObject(JSONObject.toJSONString(smsTemplate)));
         }
+        checkDataList(notifyBo, result);
     }
 }

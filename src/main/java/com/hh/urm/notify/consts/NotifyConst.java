@@ -12,11 +12,32 @@ public class NotifyConst {
     public static final String LACK_TEMPLATE_PARAMS_MSG = "缺少模板参数";
     public static final String NOTIFY_TYPE_NOT_IN_RULES = "请检查通知方式是否符合规范";
     public static final String NO_REQUEST_DATA = "no data";
+    /**
+     * 接收者
+     */
+    public final static String RECEIVER = "receiver";
+    public static final String REQUEST_ID = "requestId";
+
+    public static final String ERROR_MAPS_LIST = "errorMapsList";
+    public static final String APP_CODE = "appCode";
+    public static final String SMS_CODE = "smsCode";
+    /**
+     * 模板code
+     */
+    public final static String TEMPLATE_CODE = "templateCode";
+    /**
+     * 模板名称
+     */
+    public final static String TEMPLATE_NAME = "templateName";
 
     /**
      * 模板Id
      */
     public final static String TEMPLATE_ID = "templateId";
+    /**
+     * 系统
+     */
+    public static final String SYSTEM = "system";
 
     public enum KafkaStateEnums {
         /**
@@ -60,10 +81,7 @@ public class NotifyConst {
          * 签明
          */
         public final static String SIGNATURE = "signature";
-        /**
-         * 接收者
-         */
-        public final static String RECEIVER = "receiver";
+
         /**
          * 拓展字段
          */
@@ -84,15 +102,6 @@ public class NotifyConst {
          * 接收方
          */
         public final static String TO = "to";
-
-        /**
-         * 模板code
-         */
-        public final static String TEMPLATE_CODE = "templateCode";
-        /**
-         * 模板名称
-         */
-        public final static String TEMPLATE_NAME = "templateName";
         /**
          * 通道号
          */

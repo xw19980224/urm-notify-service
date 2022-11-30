@@ -4,11 +4,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.hh.urm.notify.consts.NotifyConst;
 import com.hh.urm.notify.enums.NotifyServiceEnums;
 import com.hh.urm.notify.model.bo.NotifyBo;
+import com.hh.urm.notify.model.entity.UserSendHistory;
 import com.hh.urm.notify.model.req.notify.NotifyDataReq;
+import com.hh.urm.notify.repository.UserSendHistoryRepository;
 import com.hh.urm.notify.service.notify.INotifyService;
 import com.hh.urm.notify.utils.TimeUtil;
 import com.hh.urm.notify.utils.base.ServiceResponse;
-import com.mongodb.BasicDBObject;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Strings;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -20,14 +21,13 @@ import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
 import javax.annotation.Resource;
-import java.util.Date;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.hh.opengateway.constant.Constant.SIGN;
 import static com.hh.urm.notify.consts.CommonConst.*;
 import static com.hh.urm.notify.consts.DbTableConst.UserSendHistory.NAME;
-import static com.hh.urm.notify.consts.DbTableConst.UserSendHistory.T_USER_SEND_HISTORY;
+import static com.hh.urm.notify.consts.NotifyConst.SYSTEM;
 
 
 /**
@@ -46,6 +46,9 @@ public class NotifyServiceImpl implements INotifyService {
 
     @Resource
     private MongoTemplate mongoTemplate;
+
+    @Resource
+    UserSendHistoryRepository userSendHistoryRepository;
 
     @Override
     public ServiceResponse<Object> notify(NotifyBo notifyBo) {
@@ -130,50 +133,42 @@ public class NotifyServiceImpl implements INotifyService {
      * @param msg      描述
      */
     public void recordHistory(String traceId, String type, int status, NotifyBo notifyBo, String msg) {
-        String currDate = TimeUtil.formatYYYYMMDDHHMMSS(new Date());
+        Timestamp timestamp = TimeUtil.nowTimestamp();
         JSONObject dataInfo = new JSONObject();
+        String sign = notifyBo.getSign();
 
-        dataInfo.put(TRACE_ID, traceId);
-        dataInfo.put(TYPE, type);
-        dataInfo.put(STATUS, status);
-        dataInfo.put(CREATE_TIME, currDate);
-        dataInfo.put(UPDATE_TIME, currDate);
-        dataInfo.put(SIGN, notifyBo.getSign());
-        if (!Strings.isNullOrEmpty(msg)) {
-            dataInfo.put(EXCEPTION, msg);
-        }
-        // 获取模板名称，模板code
-        Pair<String, String> template = getTemplateCodeAndName(notifyBo);
-        dataInfo.put(NotifyConst.Sms.TEMPLATE_CODE, template.getFirst());
-        dataInfo.put(NotifyConst.Sms.TEMPLATE_NAME, template.getSecond());
-        List<BasicDBObject> data = objectToJsonObject(type, dataInfo, notifyBo);
-
-        mongoTemplate.insert(data, T_USER_SEND_HISTORY);
-    }
-
-    /**
-     * notifyData转JSONObject
-     *
-     * @param type     通知类型
-     * @param dataInfo 通用参数
-     * @param notifyBo 通知数据
-     * @return JSONObject
-     */
-    private List<BasicDBObject> objectToJsonObject(String type, JSONObject dataInfo, NotifyBo notifyBo) {
-        return notifyBo.getData().stream().map(notifyData -> {
-            BasicDBObject jsonObject = new BasicDBObject();
-            jsonObject.putAll(dataInfo);
-            jsonObject.put(SUPER_ID, notifyData.getSuperId());
-            if (type.equals(NotifyServiceEnums.ONE_APP.getCode())) {
-                JSONObject template = notifyBo.getTemplate();
-                String pushTypes = (String) template.getOrDefault("pushTypes", "");
-                jsonObject.put("d_status", pushTypes);
+        List<UserSendHistory> list = notifyBo.getData().stream().map(item -> {
+            UserSendHistory userSendHistory = new UserSendHistory();
+            userSendHistory.setTraceId(traceId);
+            userSendHistory.setType(type);
+            userSendHistory.setStatus(status);
+            userSendHistory.setCreateBy(SYSTEM);
+            userSendHistory.setCreateTime(timestamp);
+            userSendHistory.setUpdateTime(timestamp);
+            userSendHistory.setUpdateBy(SYSTEM);
+            userSendHistory.setSign(sign);
+            if (!Strings.isNullOrEmpty(msg)) {
+                userSendHistory.setTDesc(msg);
             }
-            JSONObject params = JSONObject.parseObject(JSONObject.toJSONString(notifyData));
-            params.remove(SUPER_ID);
-            jsonObject.put(PARAMS,params);
-            return jsonObject;
+            // 获取模板名称，模板code
+            Pair<String, String> template = getTemplateCodeAndName(notifyBo);
+            userSendHistory.setTemplateCode(template.getFirst());
+            userSendHistory.setTemplateName(template.getSecond());
+
+            String params = item.getParams();
+            String receiver = item.getReceiver();
+            String superId = item.getSuperId();
+            String requestId = item.getRequestId();
+            JSONObject extend = item.getExtend();
+            userSendHistory.setParams(params);
+            userSendHistory.setReceiver(receiver);
+            userSendHistory.setSuperId(superId);
+            userSendHistory.setRequestId(requestId);
+            userSendHistory.setExtend(extend.toJSONString());
+
+            return userSendHistory;
         }).collect(Collectors.toList());
 
+        userSendHistoryRepository.saveAll(list);
     }
 }
