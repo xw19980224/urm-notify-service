@@ -24,15 +24,12 @@ import java.util.List;
 @AllArgsConstructor
 public class NotifyDataReq {
 
-    @NotEmpty
     @ApiModelProperty(value = "superId")
     private String superId;
 
-    @NotEmpty
     @ApiModelProperty(value = "通知人")
     private String notifier;
 
-    @NotEmpty
     @ApiModelProperty(value = "请求Id")
     private String requestId;
 
