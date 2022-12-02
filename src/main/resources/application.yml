@@ -58,3 +58,7 @@ notify:
     sk: 85a37e984eee11eaa84e10e7c63338a5
     url:
       pushPath: /oneapp-content-service/v2/api/message/serviceMessagePushV2
+  white-list:
+    open: true
+    mobiles: 17621039114
+    emails: 1035071992@qq.com

@@ -93,7 +93,7 @@ public class AppHandler extends BaseService implements INotifyHandler {
             String paramsStr = item.getParams();
 
             NotifyServicePushFormV2 notifyServicePushFormV2 = new NotifyServicePushFormV2();
-            notifyServicePushFormV2.setSuperId(item.getNotifier());
+            notifyServicePushFormV2.setSuperId(item.getReceiver());
             notifyServicePushFormV2.setBusinessType(businessType);
             notifyServicePushFormV2.setPushTypes(pushTypes);
             if (!Objects.isNull(jpushType)) {
@@ -125,9 +125,9 @@ public class AppHandler extends BaseService implements INotifyHandler {
                 }
             }
 
-            JSONObject replace = item.getReplace();
-            if (!Objects.isNull(replace)) {
-                templateReplace(replace, notifyServicePushFormV2);
+            JSONObject extend = item.getExtend();
+            if (!Objects.isNull(extend)) {
+                templateReplace(extend, notifyServicePushFormV2);
             }
 
             return notifyServicePushFormV2;

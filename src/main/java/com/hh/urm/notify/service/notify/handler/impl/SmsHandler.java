@@ -1,9 +1,9 @@
 package com.hh.urm.notify.service.notify.handler.impl;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.hh.urm.notify.annotation.NotifyService;
+import com.hh.urm.notify.config.WhiteListConfig;
 import com.hh.urm.notify.enums.NotifyServiceEnums;
 import com.hh.urm.notify.model.dto.notify.SmsContentDTO;
 import com.hh.urm.notify.model.dto.notify.SmsDTO;
@@ -19,7 +19,6 @@ import javax.annotation.Resource;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.hh.urm.notify.consts.CommonConst.EXCEPTION;
@@ -40,16 +39,17 @@ public class SmsHandler extends BaseService implements INotifyHandler {
     @Resource
     private SmsService smsService;
 
+    @Resource
+    private WhiteListConfig whiteListConfig;
+
     @Override
     public JSONObject handler(String traceId, List<NotifyDataReq> data, String config) {
 
         JSONObject result = new JSONObject();
         SmsTemplate smsTemplate = JSONObject.parseObject(config, SmsTemplate.class);
-        // 1、检查参数
-        Boolean checkResult = checkParams(data, smsTemplate, result);
-        if (!checkResult) {
-            return result;
-        }
+        try {
+
+        }catch ()
 
         // 2、构建参数
         Pair<Boolean, String> buildParamsResult = buildParams(data, smsTemplate, result);
@@ -73,17 +73,6 @@ public class SmsHandler extends BaseService implements INotifyHandler {
         return result;
     }
 
-    protected Boolean checkParams(List<NotifyDataReq> data, SmsTemplate smsTemplate, JSONObject result) {
-
-        // 1、校验参数
-        if (data.isEmpty()) {
-            getResultMsg(result, "接收者不存在", FAILED);
-            return false;
-        }
-
-        return true;
-    }
-
     protected Pair<Boolean, String> buildParams(List<NotifyDataReq> data, SmsTemplate smsTemplate, JSONObject result) {
 
         String templateId = smsTemplate.getTemplateId();
@@ -105,7 +94,7 @@ public class SmsHandler extends BaseService implements INotifyHandler {
         }
 
         List<SmsContentDTO> collect = data.stream().map(item -> {
-            String receiver = item.getNotifier();
+            String receiver = item.getReceiver();
             SmsContentDTO smsContentDTO = new SmsContentDTO();
             if (!receiver.contains("+86")) {
                 receiver = "+86" + receiver;
