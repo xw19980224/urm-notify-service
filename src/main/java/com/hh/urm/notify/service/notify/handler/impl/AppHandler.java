@@ -9,6 +9,7 @@ import com.hh.urm.notify.model.req.notify.NotifyDataReq;
 import com.hh.urm.notify.service.BaseService;
 import com.hh.urm.notify.service.notify.handler.INotifyHandler;
 import com.hh.urm.notify.service.request.notify.AppService;
+import com.hh.urm.notify.utils.NotifyException;
 import com.hh.urm.notify.utils.ObjectCopyUtils;
 import com.hh.urm.notify.utils.StringHelper;
 import com.hh.urm.notify.utils.TimeUtil;
@@ -62,7 +63,6 @@ public class AppHandler extends BaseService implements INotifyHandler {
                 send.put(MSG, e.getMessage());
                 send.put(STATUS, EXCEPTION);
             }
-            System.out.println(send.toJSONString());
         }
 
         return null;
@@ -119,7 +119,7 @@ public class AppHandler extends BaseService implements INotifyHandler {
 
             if (!Strings.isNullOrEmpty(paramsStr)) {
                 List<String> contentParams = Lists.newArrayList(paramsStr.split(","));
-                if (!Objects.isNull(contentParams) && !contentParams.isEmpty()) {
+                if (!contentParams.isEmpty()) {
                     content = StringHelper.paramsFill(content, contentParams);
                     notifyServicePushFormV2.setContent(content);
                 }

@@ -3,7 +3,6 @@ package com.hh.urm.notify.service.notify.handler.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.hh.urm.notify.annotation.NotifyService;
-import com.hh.urm.notify.config.WhiteListConfig;
 import com.hh.urm.notify.enums.NotifyServiceEnums;
 import com.hh.urm.notify.model.dto.notify.SmsContentDTO;
 import com.hh.urm.notify.model.dto.notify.SmsDTO;
@@ -13,16 +12,13 @@ import com.hh.urm.notify.service.BaseService;
 import com.hh.urm.notify.service.notify.handler.INotifyHandler;
 import com.hh.urm.notify.service.request.notify.SmsService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.util.Pair;
 
 import javax.annotation.Resource;
-import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.hh.urm.notify.consts.CommonConst.EXCEPTION;
-import static com.hh.urm.notify.consts.CommonConst.FAILED;
 
 
 /**
@@ -39,28 +35,20 @@ public class SmsHandler extends BaseService implements INotifyHandler {
     @Resource
     private SmsService smsService;
 
-    @Resource
-    private WhiteListConfig whiteListConfig;
-
     @Override
     public JSONObject handler(String traceId, List<NotifyDataReq> data, String config) {
 
         JSONObject result = new JSONObject();
         SmsTemplate smsTemplate = JSONObject.parseObject(config, SmsTemplate.class);
-        try {
 
-        }catch ()
-
-        // 2、构建参数
-        Pair<Boolean, String> buildParamsResult = buildParams(data, smsTemplate, result);
-        if (!buildParamsResult.getFirst()) {
-            return result;
-        }
-        String paramsStr = buildParamsResult.getSecond();
+        data = checkData(data);
 
         // 3、发送消息
         String sendResp = "";
+        String paramsStr = "";
         try {
+            // 2、构建参数
+            paramsStr = buildParams(data, smsTemplate);
             sendResp = smsService.batchSendDiffSms(paramsStr);
         } catch (Exception e) {
             log.error("traceId:{},消息发送出现异常，请及时处理。Exception Message:{} \n Exception stackTrace:{}", traceId, e.getMessage(), e.getStackTrace());
@@ -73,7 +61,24 @@ public class SmsHandler extends BaseService implements INotifyHandler {
         return result;
     }
 
-    protected Pair<Boolean, String> buildParams(List<NotifyDataReq> data, SmsTemplate smsTemplate, JSONObject result) {
+    /**
+     * 校验参数
+     *
+     * @param data
+     * @return
+     */
+    private List<NotifyDataReq> checkData(List<NotifyDataReq> data) {
+        return null;
+    }
+
+    /**
+     * 构建参数
+     *
+     * @param data        通知参数
+     * @param smsTemplate 短信模板参数
+     * @return 短信请求参数字符串
+     */
+    protected String buildParams(List<NotifyDataReq> data, SmsTemplate smsTemplate) {
 
         String templateId = smsTemplate.getTemplateId();
         String sender = smsTemplate.getSender();
@@ -115,22 +120,11 @@ public class SmsHandler extends BaseService implements INotifyHandler {
         }).collect(Collectors.toList());
         smsDTO.setSmsContent(collect);
 
-        String bodyStr = JSONObject.toJSONString(smsDTO);
-        return Pair.of(true, bodyStr);
+        return JSONObject.toJSONString(smsDTO);
     }
 
     protected void recordHistory(String paramsStr, String sendResp) {
 
     }
 
-    private String paramsToString(JSONObject params) throws Exception {
-        StringBuilder sb = new StringBuilder();
-        String temp = "";
-
-        for (String s : params.keySet()) {
-            temp = URLEncoder.encode(params.getString(s), "UTF-8");
-            sb.append(s).append("=").append(temp).append("&");
-        }
-        return sb.deleteCharAt(sb.length() - 1).toString();
-    }
 }
