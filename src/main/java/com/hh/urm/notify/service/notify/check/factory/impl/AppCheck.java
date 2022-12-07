@@ -4,19 +4,16 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.hh.urm.notify.consts.NotifyConst;
 import com.hh.urm.notify.enums.NotifyServiceEnums;
-import com.hh.urm.notify.model.bo.NotifyBo;
-import com.hh.urm.notify.model.entity.AppTemplate;
+import com.hh.urm.notify.model.notify.bo.NotifyBo;
+import com.hh.urm.notify.model.template.entity.AppTemplate;
 import com.hh.urm.notify.repository.AppTemplateRepository;
 import com.hh.urm.notify.service.notify.check.factory.BaseCheck;
 import com.hh.urm.notify.service.notify.check.factory.ICheck;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
-import static com.hh.urm.notify.consts.CommonConst.SUPER_ID;
 import static com.hh.urm.notify.consts.NotifyConst.*;
 
 /**

@@ -1,7 +1,7 @@
 package com.hh.urm.notify.service.notify.handler;
 
 import com.alibaba.fastjson.JSONObject;
-import com.hh.urm.notify.model.req.notify.NotifyDataReq;
+import com.hh.urm.notify.model.notify.req.NotifyDataReq;
 
 import java.util.List;
 

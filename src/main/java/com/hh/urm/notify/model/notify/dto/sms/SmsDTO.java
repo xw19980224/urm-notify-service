@@ -1,4 +1,4 @@
-package com.hh.urm.notify.model.dto.notify;
+package com.hh.urm.notify.model.notify.dto.sms;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,8 +1,7 @@
 package com.hh.urm.notify.service.mq.consumer;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.hh.urm.notify.model.req.notify.NotifyDataReq;
+import com.hh.urm.notify.model.notify.req.NotifyDataReq;
 import com.hh.urm.notify.service.notify.handler.INotifyHandler;
 import com.hh.urm.notify.service.notify.handler.MessageHandOutFactory;
 import lombok.extern.slf4j.Slf4j;

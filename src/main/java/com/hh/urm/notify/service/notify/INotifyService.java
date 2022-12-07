@@ -1,6 +1,6 @@
 package com.hh.urm.notify.service.notify;
 
-import com.hh.urm.notify.model.bo.NotifyBo;
+import com.hh.urm.notify.model.notify.bo.NotifyBo;
 import com.hh.urm.notify.utils.base.ServiceResponse;
 
 /**

@@ -1,7 +1,7 @@
 package com.hh.urm.notify.service.notify.check.factory;
 
 import com.alibaba.fastjson.JSONObject;
-import com.hh.urm.notify.model.bo.NotifyBo;
+import com.hh.urm.notify.model.notify.bo.NotifyBo;
 
 /**
  * @ClassName: ICheck

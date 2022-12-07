@@ -1,16 +1,13 @@
 package com.hh.urm.notify.test;
 
 import com.alibaba.fastjson.JSONObject;
-import com.hh.urm.notify.UrmNotifyApplication;
-import com.hh.urm.notify.model.entity.AppTemplate;
-import com.hh.urm.notify.model.entity.SmsTemplate;
+import com.hh.urm.notify.model.template.entity.AppTemplate;
+import com.hh.urm.notify.model.template.entity.SmsTemplate;
 import com.hh.urm.notify.repository.AppTemplateRepository;
 import com.hh.urm.notify.repository.SmsTemplateRepository;
-import com.hh.urm.notify.service.notify.handler.INotifyHandler;
 import com.hh.urm.notify.utils.TimeUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;

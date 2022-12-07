@@ -1,6 +1,6 @@
 package com.hh.urm.notify.repository;
 
-import com.hh.urm.notify.model.entity.AppTemplate;
+import com.hh.urm.notify.model.template.entity.AppTemplate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 

@@ -5,9 +5,9 @@ import com.hh.urm.notify.consts.CommonConst;
 import com.hh.urm.notify.consts.NotifyConst;
 import com.hh.urm.notify.enums.NotifyResultEnums;
 import com.hh.urm.notify.enums.NotifyServiceEnums;
-import com.hh.urm.notify.model.bo.NotifyBo;
-import com.hh.urm.notify.model.req.notify.NotifyDataReq;
-import com.hh.urm.notify.model.req.notify.NotifyReq;
+import com.hh.urm.notify.model.notify.bo.NotifyBo;
+import com.hh.urm.notify.model.notify.req.NotifyDataReq;
+import com.hh.urm.notify.model.notify.req.NotifyReq;
 import com.hh.urm.notify.service.notify.INotifyService;
 import com.hh.urm.notify.service.notify.check.NotifyParamsCheckFactory;
 import com.hh.urm.notify.service.notify.check.factory.ICheck;
@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @ClassName: NotifyController

@@ -1,7 +1,7 @@
-package com.hh.urm.notify.model.bo;
+package com.hh.urm.notify.model.notify.bo;
 
 import com.alibaba.fastjson.JSONObject;
-import com.hh.urm.notify.model.req.notify.NotifyDataReq;
+import com.hh.urm.notify.model.notify.req.NotifyDataReq;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

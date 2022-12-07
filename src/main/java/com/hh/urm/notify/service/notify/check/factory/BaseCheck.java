@@ -2,7 +2,7 @@ package com.hh.urm.notify.service.notify.check.factory;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
-import com.hh.urm.notify.model.bo.NotifyBo;
+import com.hh.urm.notify.model.notify.bo.NotifyBo;
 
 import java.util.ArrayList;
 import java.util.List;

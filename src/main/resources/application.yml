@@ -39,7 +39,7 @@ spring:
       notify_topic: urm_sms_notify_topic,urm_one_notify_topic
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:

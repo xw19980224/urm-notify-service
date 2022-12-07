@@ -8,7 +8,7 @@ import com.hh.framework.ms.mail.Mail;
 import com.hh.framework.ms.pojo.MailBody;
 import com.hh.framework.ms.pojo.MailInformation;
 import com.hh.framework.ms.pojo.MailUser;
-import com.hh.urm.notify.model.dto.notify.MailMessageDTO;
+import com.hh.urm.notify.model.notify.dto.MailMessageDTO;
 import com.hh.urm.notify.service.BaseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -4,9 +4,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.hh.urm.notify.UrmNotifyApplication;
-import com.hh.urm.notify.model.dto.notify.SmsContentDTO;
-import com.hh.urm.notify.model.dto.notify.SmsDTO;
-import com.hh.urm.notify.model.entity.SmsTemplate;
+import com.hh.urm.notify.model.notify.dto.sms.SmsContentDTO;
+import com.hh.urm.notify.model.notify.dto.sms.SmsDTO;
+import com.hh.urm.notify.model.template.entity.SmsTemplate;
 import com.hh.urm.notify.repository.SmsTemplateRepository;
 import com.hh.urm.notify.service.request.notify.SmsService;
 import com.hh.urm.notify.utils.TimeUtil;
@@ -119,11 +119,11 @@ public class SmsSendTest {
         String response = smsService.batchSendDiffSms(bodyStr);
         System.out.println(response);
     }
-    
+
     @Test
-    public void ddd(){
+    public void ddd() {
         String str = "2021-09-14 16:50:42";
-        str = str.replace(" "," ");
+        str = str.replace(" ", " ");
         Date date = TimeUtil.parseDate(str, TimeUtil.YYYY_MM_DD_HH_MM_SS);
         System.out.println(date);
     }

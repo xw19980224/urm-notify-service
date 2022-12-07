@@ -1,4 +1,4 @@
-package com.hh.urm.notify.model.req.notify;
+package com.hh.urm.notify.model.notify.req;
 
 
 import com.alibaba.fastjson.JSONObject;

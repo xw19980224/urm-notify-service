@@ -1,4 +1,4 @@
-package com.hh.urm.notify.model.req.notify;
+package com.hh.urm.notify.model.notify.req;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

@@ -1,4 +1,4 @@
-package com.hh.urm.notify.model.entity;
+package com.hh.urm.notify.model.notify.bean;
 
 import org.hibernate.annotations.GenericGenerator;
 
